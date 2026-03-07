@@ -1,4 +1,4 @@
-# engenharia_de_prompt_aplicacoes_ai-
+# engenharia_de_prompt_aplicacoes_ai
 Atividades da Faculdade
 
 A Engenharia de Prompt é a prática de projetar, estruturar e otimizar instruções para modelos de Inteligência Artificial (principalmente modelos de linguagem) a fim de obter respostas mais precisas, úteis e consistentes.
