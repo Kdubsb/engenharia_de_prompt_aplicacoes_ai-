@@ -1,0 +1,78 @@
+
+Olá! É um prazer colaborar no seu desenvolvimento em Python. Como instrutor, meu foco não é apenas fazer o código funcionar, mas garantir que ele seja **resiliente** e **legível**.
+
+Em projetos reais, o tratamento de erros é o que separa um script casual de um software profissional. Abaixo, apresento uma solução que utiliza o bloco `try/except` para lidar com entradas inválidas e tipos de dados incompatíveis.
+
+---
+
+## Implementação da Função
+
+```python
+def calcular_media(numeros):
+    """
+    Calcula a média aritmética de uma lista de números.
+    
+    Argumentos:
+    numeros (list): Uma lista contendo valores numéricos (int ou float).
+    
+    Retorna:
+    float: O valor da média calculada.
+    
+    Lança:
+    ValueError: Se a lista estiver vazia.
+    TypeError: Se a entrada não for uma lista ou contiver elementos não numéricos.
+    """
+    
+    # 1. Verificação de Tipo: Garante que o argumento passado é efetivamente uma lista
+    if not isinstance(numeros, list):
+        raise TypeError(f"Erro: Esperava-se uma lista, mas recebeu {type(numeros).__name__}.")
+
+    # 2. Tratamento de Lista Vazia: Evita a divisão por zero antes que ela ocorra
+    if len(numeros) == 0:
+        raise ValueError("Erro: Não é possível calcular a média de uma lista vazia.")
+
+    try:
+        # 3. Processamento: Soma os valores e divide pelo total de elementos
+        soma_total = sum(numeros)
+        media = soma_total / len(numeros)
+        return media
+        
+    except TypeError:
+        # 4. Erro de Conteúdo: Captura casos onde a lista contém strings ou outros tipos
+        raise TypeError("Erro: A lista deve conter apenas números (int ou float).")
+
+```
+
+---
+
+## Casos de Teste
+
+Aqui estão três cenários distintos para validar o comportamento da função, cobrindo o sucesso e as exceções previstas:
+
+### 1. Caso de Sucesso (Lista Padrão)
+**Entrada:** `[10, 20, 30, 40]`
+```python
+try:
+    resultado = calcular_media([10, 20, 30, 40])
+    print(f"Média calculada: {resultado}")  # Saída esperada: 25.0
+except Exception as e:
+    print(e)
+```
+
+### 2. Erro de Lista Vazia (Requisito Rigoroso)
+**Entrada:** `[]`
+```python
+try:
+    resultado = calcular_media([])
+except ValueError as e:
+    print(f"Capturado corretamente: {e}")  # Saída esperada: Erro: Não é possível calcular a média de uma lista vazia.
+```
+
+### 3. Erro de Tipo de Dado (Elementos Inválidos)
+**Entrada:** `[10, "vinte", 30]`
+```python
+try:
+    resultado = calcular_media([10, "vinte", 30])
+except TypeError as e:
+    print(f"Capturado corretamente: {e}")  # Saída esperada: Erro: A lista deve conter apenas números (int ou float).
+```
