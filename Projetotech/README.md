@@ -8,6 +8,12 @@ RGM: 47850094
 
 ---
 
+## Solução
+
+[UDF News](file:///C:/Users/JOAORAFAELDOCARMOSAN/Downloads/Projeto_Udf_News.html)
+
+---
+
 ## 📌 Desafio Escolhido
 
 Projeto UDF News
