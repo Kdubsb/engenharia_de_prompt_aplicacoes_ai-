@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDFNEWS - Ecossistema Universitário Interativo</title>
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --blue-udf: #0056b3;
+            --red-news: #cc0000;
+            --sidebar-bg: #111116;
+            --sidebar-text: #f5f5f7;
+            --accent-vibrant: #ff007f;
+            --student-green: #00b894;
+            
+            /* Cores de Alto Contraste para os Níveis */
+            --stroke-geral: #4a00e0;
+            --stroke-exatas: #00d2ff;
+            --stroke-humanas: #ff9f43;
+            --stroke-biologicas: #10ac84;
+            --stroke-semestre: #ee5253;
+            --stroke-curso: #ff9f43;
+            --stroke-sala: #222f3e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* BARRA SUPERIOR DE PERFIL (CONTROLE DE TELAS) */
+        header {
+            width: 100%;
+            height: 65px;
+            background-color: #0d0d11;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 20;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+        .brand .udf { color: #38ef7d; }
+        .brand .news { color: var(--red-news); }
+
+        .profile-switcher {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: 2px solid #333;
+            background: transparent;
+            color: #aaa;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            border-color: #38ef7d;
+            color: white;
+            background: rgba(56, 239, 125, 0.2);
+        }
+
+        /* ESTRUTURA PRINCIPAL */
+        #main-container {
+            display: flex;
+            width: 100%;
+            height: calc(100% - 65px);
+            position: relative;
+        }
+
+        /* ABAS LATERAIS (ADMIN E AGENDA) */
+        aside {
+            width: 320px;
+            height: 100%;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .panel-padding {
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 5px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; margin-bottom: 5px; color: #aaa; text-transform: uppercase;}
+        input, select, textarea {
+            width: 100%; padding: 10px; background-color: #1f1f26; border: 1px solid #333;
+            border-radius: 6px; color: white; font-size: 13px;
+        }
+        input:focus, select:focus, textarea:focus { border-color: #38ef7d; outline: none; }
+
+        button.action-btn {
+            width: 100%; padding: 12px; border: none; border-radius: 6px; color: white;
+            font-weight: bold; cursor: pointer; background: linear-gradient(135deg, #0056b3, #00c6ff);
+            transition: opacity 0.2s;
+        }
+        button.action-btn:hover { opacity: 0.9; }
+
+        /* PAINEL DE AGENDA DIREITO */
+        #agenda-panel {
+            background-color: #f8f9fa;
+            border-left: 1px solid #e1e8ed;
+            color: #2c3e50;
+        }
+        #agenda-panel h2 { color: #555; border-bottom: 1px solid #ddd;}
+
+        .event-card {
+            background: white;
+            border-left: 4px solid var(--stroke-geral);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .event-card.area { border-left-color: var(--stroke-exatas); }
+        .event-card.semestre { border-left-color: var(--stroke-semestre); }
+        .event-card.curso { border-left-color: var(--stroke-curso); }
+        .event-card.sala { border-left-color: var(--stroke-sala); }
+
+        .event-card h4 { font-size: 14px; margin-bottom: 4px; color: #111; }
+        .event-card p { font-size: 12px; color: #555; line-height: 1.4; }
+        .event-tag {
+            display: inline-block; font-size: 9px; font-weight: bold; background: #eee;
+            padding: 2px 6px; border-radius: 10px; margin-top: 6px; text-transform: uppercase;
+        }
+
+        /* ÁREA CENTRAL DO MAPA */
+        #canvas-wrapper {
+            flex-grow: 1;
+            height: 100%;
+            position: relative;
+            background-color: #ffffff;
+        }
+
+        canvas { width: 100%; height: 100%; display: block; cursor: grab; }
+        canvas:active { cursor: grabbing; }
+
+        /* INTERFACE EXCLUSIVA DO ALUNO (BOTÕES FLUTUANTES) */
+        .student-actions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 15;
+        }
+
+        .float-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-ouvidoria { background: linear-gradient(135deg, #00b894, #00cea6); }
+        .btn-sair { background: linear-gradient(135deg, #ff7675, #d63031); }
+
+        /* TOAST NOTIFICAÇÃO */
+        .toast {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translate(-50%, -100px);
+            background: #2ecc71;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 200;
+        }
+        .toast.show { transform: translate(-50%, 0); }
+
+        /* POPUP MODAL OUVIDORIA */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; align-items: center;
+            justify-content: center; z-index: 300; display: none;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 12px; width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        /* UTILITÁRIO DE NAVEGAÇÃO HINT */
+        .controls-hint {
+            position: absolute; bottom: 20px; right: 20px;
+            background: rgba(0, 0, 0, 0.8); color: white;
+            padding: 10px 18px; border-radius: 20px; font-size: 11px;
+            pointer-events: none; text-align: right; line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NOTIFICAÇÃO TOAST -->
+    <div id="toast" class="toast">Ação executada com sucesso!</div>
+
+    <!-- MODAL DE OUVIDORIA -->
+    <div id="ouvidoria-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: #111;">Ouvidoria UDFNEWS</h3>
+            <div class="form-group">
+                <label style="color: #555;">Tipo de Manifestação</label>
+                <select id="ouv-tipo" style="background:#f5f6fa; color:#333; border: 1px solid #ddd;">
+                    <option value="Sugestão">💡 Sugestão</option>
+                    <option value="Elogio">❤️ Elogio</option>
+                    <option value="Reclamação">⚠️ Reclamação</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label style="color: #555;">Sua Mensagem</label>
+                <textarea id="ouv-msg" rows="4" style="background:#f5f6fa; color:#333; border: 1px solid #ddd;" placeholder="Escreva aqui..."></textarea>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="action-btn" onclick="enviarOuvidoria()" style="background:#00b894;">Enviar</button>
+                <button class="action-btn" onclick="fecharModal()" style="background:#bbb;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER DE PERFIL -->
+    <header>
+        <div class="brand"><span class="udf">UDF</span><span class="news">NEWS</span></div>
+        <div class="profile-switcher">
+            <span style="font-size:12px; color:#888;">AMBIENTE ATIVO:</span>
+            <button id="view-admin" class="view-btn active" onclick="switchView('admin')">Coordenador / Admin</button>
+            <button id="view-aluno" class="view-btn" onclick="switchView('aluno')">Aluno / Usuário</button>
+        </div>
+    </header>
+
+    <div id="main-container">
+        <!-- BARRA LATERAL ESQUERDA - EXCLUSIVA ADMIN -->
+        <aside id="admin-sidebar">
+            <div class="panel-padding">
+                <h2>⚙️ Parâmetros da Estrutura</h2>
+                <div class="form-group">
+                    <label for="cfg-semestres">Semestres em Linha</label>
+                    <input type="number" id="cfg-semestres" value="8" min="1" max="12">
+                </div>
+                <div class="form-group">
+                    <label for="cfg-cursos">Cursos por Semestre</label>
+                    <input type="number" id="cfg-cursos" value="4" min="1" max="6">
+                </div>
+                <div class="form-group">
+                    <label for="cfg-salas">Salas de Aula por Curso</label>
+                    <input type="number" id="cfg-salas" value="4" min="1" max="6">
+                </div>
+                <button class="action-btn" id="btn-rebuild" style="background:#4a00e0; margin-bottom:20px;">Reconfigurar Grade</button>
+
+                <h2>📢 Lançador de Avisos</h2>
+                <div class="form-group">
+                    <label for="news-title">Título do Evento</label>
+                    <input type="text" id="news-title" placeholder="Ex: Avaliação Global">
+                </div>
+                <div class="form-group">
+                    <label for="news-desc">Descrição</label>
+                    <textarea id="news-desc" rows="3" placeholder="Dados importantes do evento..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="news-level">Destino / Escopo</label>
+                    <select id="news-level">
+                        <option value="geral">Geral (Faculdade)</option>
+                        <option value="area">Área de Ensino</option>
+                        <option value="semestre">Semestre Letivo</option>
+                        <option value="curso">Grade de Curso</option>
+                        <option value="sala">Turma / Sala de Aula</option>
+                    </select>
+                </div>
+
+                <!-- Filtros em Cascata Hidratados Dinamicamente -->
+                <div id="div-f-area" class="form-group" style="display:none;"><label>Área</label><select id="f-area"><option value="Exatas">Exatas</option><option value="Humanas">Humanas</option><option value="Biológicas">Biológicas</option></select></div>
+                <div id="div-f-semestre" class="form-group" style="display:none;"><label>Semestre</label><select id="f-semestre"></select></div>
+                <div id="div-f-curso" class="form-group" style="display:none;"><label>Curso</label><select id="f-curso"></select></div>
+                <div id="div-f-sala" class="form-group" style="display:none;"><label>Sala</label><select id="f-sala"></select></div>
+
+                <button class="action-btn" id="btn-postar" style="background:linear-gradient(135deg, #cc0000, #ff4757);">Emitir Comunicado</button>
+            </div>
+        </aside>
+
+        <!-- CANVAS CENTRAL (ZOOM E ARRASTE) -->
+        <div id="canvas-wrapper">
+            <canvas id="canvasMiro"></canvas>
+            
+            <!-- Botões Dinâmicos do Modo Estudante -->
+            <div class="student-actions" id="student-overlay" style="display: none;">
+                <button class="float-btn btn-ouvidoria" onclick="abrirOuvidoria()">💬 Ouvidoria UDF</button>
+                <button class="float-btn btn-sair" onclick="logoutSimulado()">❌ Sair do App</button>
+            </div>
+
+            <div class="controls-hint">
+                Arrastar para mover o mapa | Scroll para dar Zoom<br>
+                <strong>Duplo clique nos círculos centraliza a visão</strong>
+            </div>
+        </div>
+
+        <!-- BARRA LATERAL DIREITA - LISTAGEM DE EVENTOS FUTUROS -->
+        <aside id="agenda-panel">
+            <div class="panel-padding">
+                <h2>📅 Próximos Eventos & Avisos</h2>
+                <div id="agenda-feed-container">
+                    <!-- Gerado de forma reativa pelo JS -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvasMiro');
+        const ctx = canvas.getContext('2d');
+
+        // Configurações Globais Gerenciáveis
+        let config = { semestres: 8, cursosPorArea: 4, salasPorCurso: 4 };
+
+        // Estados da Câmera estilo Miro
+        let cam = { x: 0, y: 0, zoom: 0.16, isDragging: false, sX: 0, sY: 0 };
+        let currentMode = 'admin';
+
+        // Banco de Dados reativo estruturado
+        let eventos = [
+            { level: 'geral', target: 'geral', title: 'Renovação de Matrícula 2026', desc: 'Prazo estendido para regularização das grades letivas sem juros adicionais.' },
+            { level: 'area', target: 'Exatas', title: 'Maratona de Programação Intercursos', desc: 'Competição com direito a premiação e horas complementares de extensão.' },
+            { level: 'area', target: 'Humanas', title: 'Simpósio de Ética e Sociedade', desc: 'Presença confirmada de palestrantes externos no anfiteatro.' },
+            { level: 'semestre', target: 'Exatas-3º Semestre', title: 'Entrega do Projeto Integrador I', desc: 'Submissão via portal até as 23:59 da sexta-feira.' },
+            { level: 'curso', target: 'Exatas-1º Semestre-Ciência da Computação', title: 'Aula Prática Extra de Lab', desc: 'Sábado letivo com foco em estruturas condicionais.' },
+            { level: 'sala', target: 'Humanas-1º Semestre-Direito-Sala 1', title: 'Entrega de Fichamento Prático', desc: 'Entregar impresso diretamente na mesa do professor regente.' }
+        ];
+
+        const cursosPorEixo = {
+            'Exatas': ['Ciência da Computação', 'Engenharia Civil', 'Análise de Sistemas', 'Banco de Dados', 'Redes de Computadores'],
+            'Humanas': ['Direito', 'Psicologia', 'Administração', 'Pedagogia', 'História'],
+            'Biológicas': ['Enfermagem', 'Biomedicina', 'Nutrição', 'Fisioterapia', 'Medicina Veterinária']
+        };
+
+        function resize() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Posiciona o ponto central inicial no centro do canvas
+        cam.x = canvas.width / 2; cam.y = canvas.height / 2;
+
+        // --- SISTEMA ALTERNADOR DE TELAS (VISUALIZAÇÃO) ---
+        function switchView(mode) {
+            currentMode = mode;
+            document.getElementById('view-admin').classList.toggle('active', mode === 'admin');
+            document.getElementById('view-aluno').classList.toggle('active', mode === 'aluno');
+            document.getElementById('admin-sidebar').style.display = mode === 'admin' ? 'flex' : 'none';
+            document.getElementById('student-overlay').style.display = mode === 'aluno' ? 'flex' : 'none';
+            showToast(`Mudou para ambiente do ${mode === 'admin' ? 'Administrador' : 'Aluno'}`);
+        }
+
+        // --- MOTOR GEOMÉTRICO (PREVINE SOBREPOSIÇÃO DOS CÍRCULOS) ---
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#ffffff"; // Fundo branco obrigatório
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            ctx.translate(cam.x, cam.y);
+            ctx.scale(cam.zoom, cam.zoom);
+
+            const R_GERAL = 2400;
+            
+            // 1. Círculo Geral
+            ctx.beginPath(); ctx.arc(0, 0, R_GERAL, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(74, 0, 224, 0.01)'; ctx.fill();
+            ctx.strokeStyle = varColor('--stroke-geral'); ctx.lineWidth = 14 / cam.zoom;
+            ctx.lineWidth = Math.min(Math.max(10, 8 / cam.zoom), 40); ctx.stroke();
+            
+            renderTextNode("UDFNEWS - AMBIENTE CENTRAL UNIVERSITÁRIO", 0, -R_GERAL + 120, 75, varColor('--stroke-geral'), true);
+            renderCanvasEvents('geral', 'geral', 0, -R_GERAL + 350, 600);
+
+            // 2. Círculos de Área
+            const areas = ['Exatas', 'Humanas', 'Biológicas'];
+            const R_AREA = 800;
+            const DIST_AREA = 1350; // Afastamento controlado para evitar qualquer colisão externa
+
+            areas.forEach((area, aIdx) => {
+                const angArea = (aIdx * Math.PI * 2) / 3 - Math.PI / 2;
+                const aX = Math.cos(angArea) * DIST_AREA;
+                const aY = Math.sin(angArea) * DIST_AREA;
+
+                let colorArea = area === 'Exatas' ? varColor('--stroke-exatas') : area === 'Humanas' ? varColor('--stroke-humanas') : varColor('--stroke-biologicas');
+
+                ctx.beginPath(); ctx.arc(aX, aY, R_AREA, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fill();
+                ctx.strokeStyle = colorArea; ctx.stroke();
+
+                renderTextNode(`EIXO DE ${area.toUpperCase()}`, aX, aY - R_AREA + 70, 42, colorArea, true);
+                renderCanvasEvents('area', area, aX, aY - R_AREA + 220, 400);
+
+                // 3. Círculos de Semestre (Disposição Dinâmica Escalável)
+                const semestres = config.semestres;
+                const R_SEMESTRE = 200;
+                // Distorção de distância de acordo com a densidade de semestres
+                const DIST_SEMESTRE = 460;
+
+                for(let s=1; s<=semestres; s++) {
+                    const angSem = (s * Math.PI * 2) / semestres;
+                    const sX = aX + Math.cos(angSem) * DIST_SEMESTRE;
+                    const sY = aY + Math.sin(angSem) * DIST_SEMESTRE;
+
+                    ctx.beginPath(); ctx.arc(sX, sY, R_SEMESTRE, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fill();
+                    ctx.strokeStyle = varColor('--stroke-semestre'); ctx.lineWidth = Math.min(Math.max(4, 2 / cam.zoom), 12); ctx.stroke();
+
+                    renderTextNode(`${s}º SEMESTRE`, sX, sY - R_SEMESTRE + 30, 16, varColor('--stroke-semestre'), true);
+                    let tSemestre = `${area}-${s}º Semestre`;
+                    renderCanvasEvents('semestre', tSemestre, sX, sY - R_SEMESTRE + 75, 130);
+
+                    // 4. Círculos de Cursos (Tamanho Reduzido para evitar choque mútuo)
+                    const cursos = config.cursosPorArea;
+                    const R_CURSO = 55;
+                    const DIST_CURSO = 115;
+
+                    for(let c=0; c<cursos; c++) {
+                        const angCur = (c * Math.PI * 2) / cursos;
+                        const cX = sX + Math.cos(angCur) * DIST_CURSO;
+                        const cY = sY + Math.sin(angCur) * DIST_CURSO;
+
+                        let nomeCurso = cursosPorEixo[area][c % cursosPorEixo[area].length] || `Curso Extra ${c+1}`;
+
+                        ctx.beginPath(); ctx.arc(cX, cY, R_CURSO, 0, Math.PI * 2);
+                        ctx.fillStyle = '#ffffff'; ctx.fill();
+                        ctx.strokeStyle = '#d35400'; ctx.stroke();
+
+                        renderTextNode(nomeCurso, cX, cY - R_CURSO + 12, 6, '#d35400', true);
+                        let tCurso = `${area}-${s}º Semestre-${nomeCurso}`;
+                        renderCanvasEvents('curso', tCurso, cX, cY - R_CURSO + 30, 42);
+
+                        // 5. Círculos de Sala de Aula (Microestrutura interna visível por ampliação)
+                        const salas = config.salasPorCurso;
+                        const R_SALA = 15;
+                        const DIST_SALA = 28;
+
+                        for(let sl=1; sl<=salas; sl++) {
+                            const angSala = (sl * Math.PI * 2) / salas;
+                            const slX = cX + Math.cos(angSala) * DIST_SALA;
+                            const slY = cY + Math.sin(angSala) * DIST_SALA;
+
+                            ctx.beginPath(); ctx.arc(slX, slY, R_SALA, 0, Math.PI * 2);
+                            ctx.fillStyle = '#f8f9fa'; ctx.fill();
+                            ctx.strokeStyle = '#222f3e'; ctx.lineWidth = 1; ctx.stroke();
+
+                            renderTextNode(`S${sl}`, slX, slY - 2, 3.5, '#222f3e', true);
+                            let tSala = `${area}-${s}º Semestre-${nomeCurso}-Sala ${sl}`;
+                            renderCanvasEvents('sala', tSala, slX, slY + 3, 12);
+                        }
+                    }
+                }
+            });
+
+            ctx.restore();
+        }
+
+        // --- SISTEMA REATIVO DE TEXTO COM PREVENÇÃO DE OVERLAPPING ---
+        function renderTextNode(text, x, y, size, color, isBold = false) {
+            // Se o caractere ficar menor que 1.8 pixels físicos, não renderiza para manter a nitidez
+            if (size * cam.zoom < 1.8) return;
+
+            ctx.fillStyle = color;
+            ctx.font = `${isBold ? 'bold ' : ''}${size}px sans-serif`;
+            ctx.textAlign = 'center';
+            
+            // Truncagem inteligente para evitar estouro de linha em microfocos
+            if (text.length > 18 && size <= 8) {
+                text = text.substring(0, 15) + '...';
+            }
+            
+            // Caixa de Contraste para textos medianos/pequenos sobrepostos por linhas
+            if (size < 30) {
+                ctx.save();
+                ctx.font = `${isBold ? 'bold ' : ''}${size}px sans-serif`;
+                let width = ctx.measureText(text).width;
+                ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+                ctx.fillRect(x - width/2 - 2, y - size + 2, width + 4, size + 2);
+                ctx.restore();
+            }
+
+            ctx.fillStyle = color;
+            ctx.fillText(text, x, y);
+        }
+
+        function renderCanvasEvents(level, targetKey, cx, topY, maxWidth) {
+            const list = eventos.filter(e => e.level === level && e.target === targetKey);
+            if(list.length === 0) return;
+
+            let cY = topY;
+            list.forEach(ev => {
+                let tSize = level === 'geral' ? 26 : level === 'area' ? 16 : level === 'semestre' ? 9 : level === 'curso' ? 3.5 : 1.8;
+                let dSize = level === 'geral' ? 18 : level === 'area' ? 11 : level === 'semestre' ? 6 : level === 'curso' ? 2.5 : 1.2;
+                
+                if (tSize * cam.zoom < 2.5) return;
+
+                let hBox = tSize + dSize + 15;
+                
+                // Card do Canvas
+                ctx.fillStyle = "#ffffff";
+                ctx.strokeStyle = "rgba(0,0,0,0.15)";
+                ctx.fillRect(cx - maxWidth/2, cY, maxWidth, hBox);
+                ctx.strokeRect(cx - maxWidth/2, cY, maxWidth, hBox);
+
+                // Título
+                ctx.fillStyle = "#000000";
+                ctx.font = `bold ${tSize}px sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.fillText(ev.title, cx, cY + tSize + 2);
+
+                // Corpo
+                ctx.fillStyle = "#555555";
+                ctx.font = `${dSize}px sans-serif`;
+                ctx.fillText(ev.desc.substring(0, 35) + "...", cx, cY + tSize + dSize + 8);
+
+                cY += hBox + 10;
+            });
+        }
+
+        // --- ATUALIZADOR DO FEED DA AGENDA (PAINEL DIREITO) ---
+        function renderAgendaFeed() {
+            const container = document.getElementById('agenda-feed-container');
+            container.innerHTML = '';
+
+            if (eventos.length === 0) {
+                container.innerHTML = '<p style="font-size:13px; color:#888;">Nenhum evento agendado no momento.</p>';
+                return;
+            }
+
+            // Mapeamento de ordenação por relevância estrutural
+            const ordem = { 'geral': 1, 'area': 2, 'semestre': 3, 'curso': 4, 'sala': 5 };
+            let ordenados = [...eventos].sort((a,b) => ordem[a.level] - ordem[b.level]);
+
+            ordenados.forEach(ev => {
+                const card = document.createElement('div');
+                card.className = `event-card ${ev.level}`;
+                
+                // Formatador amigável da tag de escopo
+                let tagFormatada = ev.target === 'geral' ? 'Escopo Geral' : ev.target.replace(/-/g, ' ➔ ');
+
+                card.innerHTML = `
+                    <h4>${ev.title}</h4>
+                    <p>${ev.desc}</p>
+                    <span class="event-tag">${tagFormatada}</span>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- CONTROLADORES DE EVENTO DE MOUSE (ARRRASTE E ZOOM MIRO) ---
+        canvas.addEventListener('mousedown', (e) => {
+            cam.isDragging = true;
+            cam.sX = e.clientX - cam.x;
+            cam.sY = e.clientY - cam.y;
+        });
+        window.addEventListener('mouseup', () => cam.isDragging = false);
+        canvas.addEventListener('mousemove', (e) => {
+            if (!cam.isDragging) return;
+            cam.x = e.clientX - cam.sX;
+            cam.y = e.clientY - cam.sY;
+            draw();
+        });
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const mX = e.clientX - rect.left;
+            const mY = e.clientY - rect.top;
+
+            let scale = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+            let newZoom = Math.max(0.01, Math.min(cam.zoom * scale, 28));
+
+            cam.x = mX - (mX - cam.x) * (newZoom / cam.zoom);
+            cam.y = mY - (mY - cam.y) * (newZoom / cam.zoom);
+            cam.zoom = newZoom;
+            draw();
+        }, { passive: false });
+
+        canvas.addEventListener('dblclick', () => {
+            cam.zoom = Math.min(cam.zoom * 2.5, 20);
+            draw();
+        });
+
+        // --- LOGICA DOS FILTROS DO PAINEL ADMIN ---
+        const selNivel = document.getElementById('news-level');
+        selNivel.addEventListener('change', syncFormFilters);
+        document.getElementById('f-area').addEventListener('change', syncFormFilters);
+
+        function syncFormFilters() {
+            const nv = selNivel.value;
+            document.getElementById('div-f-area').style.display = ['area','semestre','curso','sala'].includes(nv) ? 'block' : 'none';
+            document.getElementById('div-f-semestre').style.display = ['semestre','curso','sala'].includes(nv) ? 'block' : 'none';
+            document.getElementById('div-f-curso').style.display = ['curso','sala'].includes(nv) ? 'block' : 'none';
+            document.getElementById('div-f-sala').style.display = nv === 'sala' ? 'block' : 'none';
+
+            // Hidrata selects
+            const sSem = document.getElementById('f-semestre');
+            if(sSem.innerHTML === '') {
+                for(let i=1; i<=config.semestres; i++) sSem.innerHTML += `<option value="${i}º Semestre">${i}º Semestre</option>`;
+            }
+            
+            const areaAtiva = document.getElementById('f-area').value;
+            const sCur = document.getElementById('f-curso');
+            sCur.innerHTML = '';
+            for(let c=0; c<config.cursosPorArea; c++) {
+                let n = cursosPorEixo[areaAtiva][c % cursosPorEixo[areaAtiva].length];
+                sCur.innerHTML += `<option value="${n}">${n}</option>`;
+            }
+
+            const sSala = document.getElementById('f-sala');
+            sSala.innerHTML = '';
+            for(let s=1; s<=config.salasPorCurso; s++) sSala.innerHTML += `<option value="Sala ${s}">Sala ${s}</option>`;
+        }
+
+        // Configuração de Nova Grade de Círculos
+        document.getElementById('btn-rebuild').addEventListener('click', () => {
+            config.semestres = parseInt(document.getElementById('cfg-semestres').value);
+            config.cursosPorArea = parseInt(document.getElementById('cfg-cursos').value);
+            config.salasPorCurso = parseInt(document.getElementById('cfg-salas').value);
+            document.getElementById('f-semestre').innerHTML = ''; // força reset
+            syncFormFilters();
+            draw();
+            showToast("Grade e subgrupos recalculados!");
+        });
+
+        // Envio de novo comunicado
+        document.getElementById('btn-postar').addEventListener('click', () => {
+            const t = document.getElementById('news-title').value;
+            const d = document.getElementById('news-desc').value;
+            if(!t || !d) return alert("Preencha o título e a descrição!");
+
+            let target = 'geral';
+            const nv = selNivel.value;
+            if(nv !== 'geral') {
+                const area = document.getElementById('f-area').value;
+                const sem = document.getElementById('f-semestre').value;
+                const curso = document.getElementById('f-curso').value;
+                const sala = document.getElementById('f-sala').value;
+
+                if(nv === 'area') target = area;
+                if(nv === 'semestre') target = `${area}-${sem}`;
+                if(nv === 'curso') target = `${area}-${sem}-${curso}`;
+                if(nv === 'sala') target = `${area}-${sem}-${curso}-${sala}`;
+            }
+
+            eventos.push({ level: nv, target, title: t, desc: d });
+            document.getElementById('news-title').value = '';
+            document.getElementById('news-desc').value = '';
+            
+            draw();
+            renderAgendaFeed();
+            showToast("Aviso fixado no mapa e na agenda!");
+        });
+
+        // --- SISTEMA DE UTILS ---
+        function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+        function showToast(m) {
+            const el = document.getElementById('toast'); el.innerText = m; el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        // --- FUNÇÕES DA OUVIDORIA (ALUNO) ---
+        function abrirOuvidoria() { document.getElementById('ouvidoria-modal').style.display = 'flex'; }
+        function fecharModal() { document.getElementById('ouvidoria-modal').style.display = 'none'; }
+        function enviarOuvidoria() {
+            const msg = document.getElementById('ouv-msg').value;
+            if(!msg) return alert("Escreva uma mensagem para a coordenação.");
+            fecharModal();
+            document.getElementById('ouv-msg').value = '';
+            showToast("Manifestação enviada sigilosamente à reitoria!");
+        }
+        function logoutSimulado() {
+            alert("Saindo do UDFNEWS... Sessão encerrada.");
+            window.close(); // Tenta fechar a aba se permitido pelo navegador
+        }
+
+        // Inicialização
+        syncFormFilters();
+        draw();
+        renderAgendaFeed();
+    </script>
+</body>
+</html>
