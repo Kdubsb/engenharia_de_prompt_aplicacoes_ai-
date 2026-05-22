@@ -1,4 +1,12 @@
+# Projeto UDF News
 
+Projeto feito em colaboração com:
+
+João Rafael do Carmo Santos
+
+RGM: 47850094
+
+---
 
 ## 📌 Desafio Escolhido
 
@@ -32,30 +40,28 @@ A plataforma tem como principal objetivo servir como um ambiente de postagens ad
 
 ## ⚠️ Limitações Encontradas
 
-Liste pelo menos **3 limitações** percebidas:
+1. Limite de acesso: O Claude AI permite apenas 1 prompt por acesso, atrasando o aperfeiçoamento da plataforma.
 
-1. O Claude AI sofre de uma limitação de 1 prompt por acesso
+2. Integração como API: A plataforma necessita está integrada com o sistema da UDF, o que nos força a pensar nela para além de um sistema independente e como integrá-lo efetivamente com o sistema da faculdade. Conhecimento esses que ainda não dominamos.
 
-2. Dependência da plataforma
-
-3. Risco de lock-in tecnológico
+3. Site adaptativo: A plataforma funciona originalmente como um site, mas identificou-se que é altamente produtivo transformá-la em um WebApp. Ou seja, reforçando a limitação anterior de integrar ao sistema da UDF.
 
 ---
 
 ## 📚 Reflexão Crítica
 
-Explique como o grupo lidou com as limitações e quais soluções criativas foram propostas para contorná-las.
+Para contornar o limite de acesso do Claude AI, os estudantes mapearam os problemas da plataforma, como correção de cores e problemas de resposta do sistema sobre uma ação do usuário e aplicaram todos em apenas 1 prompt bem estruturado e detalhado.
 
 ---
 
 ## 👥 Colaboração
 
-Descreva como o grupo organizou as tarefas e responsabilidades entre os integrantes.
+Carlos Eduardo ficou encarregado de criar o prompt que gerou a plataforma e fazer a correção estética (cores e aparência da interface principal).
+
+João Rafael ficou encarregado de organizar a documentação e corrigir bugs.
 
 ---
 
 ## 🚀 Próximos Passos
 
-- Melhorias sugeridas para o protótipo.
-
-- Possíveis evoluções para o Projeto Final da Unidade 3.
+Integrar o sistema da UDF News ao sistema do Centro Universitário do Distrito Federal (UDF), automatizando avisos e o cadastro dos estudantes na plataforma. 
