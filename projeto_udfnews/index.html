@@ -45,6 +45,7 @@
   --radius-pill: 999px;
 
   --topbar-h: 56px;
+  --footer-h: 34px;
   --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
@@ -233,7 +234,7 @@ nav#main-nav::-webkit-scrollbar { display: none; }
 main#canvas-wrap {
   position: fixed;
   inset-block-start: var(--topbar-h);
-  inset: var(--topbar-h) 0 0 0;
+  inset: var(--topbar-h) 0 var(--footer-h) 0;
   overflow: hidden;
   cursor: grab;
   touch-action: none;
@@ -315,7 +316,7 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
 ══════════════════════════════════════════════════════ */
 #breadcrumb {
   position: fixed;
-  bottom: 16px;
+  bottom: calc(var(--footer-h) + 12px);
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255,255,255,0.92);
@@ -337,13 +338,14 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: bottom 0.2s;
 }
 #breadcrumb strong { color: var(--text); }
 #breadcrumb .sep { color: var(--faint); }
 
 #hint {
   position: fixed;
-  bottom: 56px;
+  bottom: calc(var(--footer-h) + 52px);
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0,80,179,0.08);
@@ -354,7 +356,7 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
   color: var(--blue);
   z-index: 90;
   pointer-events: none;
-  transition: opacity 0.8s ease;
+  transition: opacity 0.8s ease, bottom 0.2s;
   white-space: nowrap;
   font-weight: 600;
 }
@@ -364,7 +366,7 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
 ══════════════════════════════════════════════════════ */
 aside#panel {
   position: fixed;
-  inset-block: var(--topbar-h) 0;
+  inset-block: var(--topbar-h) var(--footer-h);
   inset-inline-end: 0;
   width: min(360px, 100vw);
   background: rgba(255,255,255,0.98);
@@ -523,7 +525,7 @@ aside#panel.open { transform: translateX(0); }
 ══════════════════════════════════════════════════════ */
 section#admin-panel {
   position: fixed;
-  inset: var(--topbar-h) 0 0 0;
+  inset: var(--topbar-h) 0 var(--footer-h) 0;
   background: var(--bg);
   z-index: 190;
   display: none;
@@ -566,501 +568,4 @@ section#admin-panel.open { display: block; }
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.stat-label {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.stat-number {
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--blue);
-}
-.stat-sub {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 4px;
-}
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-.admin-card {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  padding: clamp(16px, 2.5vw, 22px);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.admin-card-title {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-/* Form elements */
-.form-group { margin-bottom: 13px; }
-.form-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.form-input,
-.form-select,
-.form-textarea {
-  width: 100%;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  transition: border-color var(--transition), box-shadow var(--transition);
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-}
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0,80,179,0.12);
-}
-.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' [...]
-.form-select option { background: #ffffff; color: var(--text); }
-.form-textarea { resize: vertical; min-height: 82px; line-height: 1.5; }
-
-.btn-primary {
-  background: var(--blue);
-  border: none;
-  color: #fff;
-  padding: 11px 22px;
-  border-radius: var(--radius-md);
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  transition: background var(--transition), transform 0.15s;
-  width: 100%;
-}
-.btn-primary:hover { background: var(--blue-dk); }
-.btn-primary:active { transform: scale(0.98); }
-
-/* News table */
-.news-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table.news-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  min-width: 380px;
-}
-.news-table th {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  text-align: left;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-.news-table td {
-  padding: 8px;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-  vertical-align: top;
-}
-.td-badge {
-  display: inline-block;
-  padding: 2px 9px;
-  border-radius: var(--radius-pill);
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-.del-btn {
-  background: transparent;
-  border: 1px solid rgba(229,26,26,0.4);
-  color: var(--red);
-  border-radius: 6px;
-  padding: 3px 9px;
-  font-size: 10px;
-  font-weight: 700;
-  font-family: inherit;
-  transition: background var(--transition), color var(--transition);
-}
-.del-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
-
-/* ══════════════════════════════════════════════════════
-   LOGIN MODAL
-══════════════════════════════════════════════════════ */
-dialog#login-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(0,0,0,0.50);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  border: none;
-  padding: 0;
-  max-width: none;
-  max-height: none;
-  width: 100%;
-  height: 100%;
-}
-dialog#login-modal.open {
-  display: flex;
-}
-.login-box {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-xl);
-  padding: clamp(24px, 5vw, 36px);
-  width: min(340px, 90vw);
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-}
-.login-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 40px;
-  letter-spacing: 3px;
-  line-height: 1;
-  margin-bottom: 4px;
-  color: var(--text);
-}
-.login-logo .u { color: var(--blue); }
-.login-logo .n { color: var(--red); }
-.login-sub {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 24px;
-}
-.login-err {
-  color: var(--red);
-  font-size: 12px;
-  margin-top: 10px;
-  display: none;
-}
-.login-hint {
-  margin-top: 14px;
-  font-size: 10px;
-  color: var(--faint);
-}
-
-/* ══════════════════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════════════════ */
-#toast {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  z-index: 999;
-  background: var(--green);
-  color: #fff;
-  padding: 11px 20px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 700;
-  transform: translateY(70px);
-  opacity: 0;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
-  pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0,179,65,0.25);
-}
-#toast.show { transform: translateY(0); opacity: 1; }
-
-/* ══════════════════════════════════════════════════════
-   LEVEL LEGEND
-══════════════════════════════════════════════════════ */
-#legend {
-  position: fixed;
-  top: calc(var(--topbar-h) + 12px);
-  left: 12px;
-  z-index: 80;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  backdrop-filter: blur(12px);
-  font-size: 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--muted);
-  font-weight: 700;
-}
-.legend-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
-
-/* ══════════════════════════════════════════════════════
-   FOOTER
-══════════════════════════════════════════════════════ */
-footer#main-footer {
-  position: fixed;
-  inset-block-end: 0;
-  inset-inline: 0;
-  z-index: 100;
-  background: rgba(255,255,255,0.95);
-  border-top: 1px solid var(--border2);
-  backdrop-filter: blur(12px);
-  padding: 14px 20px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.5;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-}
-footer#main-footer a {
-  color: var(--blue);
-  font-weight: 700;
-  text-decoration: none;
-  transition: color var(--transition);
-}
-footer#main-footer a:hover {
-  color: var(--blue-lt);
-  text-decoration: underline;
-}
-
-/* ══════════════════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════════════════ */
-@media (max-width: 640px) {
-  nav#main-nav { display: none; }
-  .hamburger { display: flex; }
-  .zoom-controls #zoom-val { display: none; }
-  .zoom-btn { width: 26px; height: 26px; font-size: 16px; }
-  #legend { display: none; }
-
-  aside#panel { width: 100vw; border-left: none; border-top: 2px solid var(--blue); }
-
-  #breadcrumb { bottom: 10px; font-size: 11px; padding: 5px 12px; }
-  #hint { bottom: 48px; font-size: 10px; }
-
-  footer#main-footer { font-size: 11px; padding: 12px 16px; }
-}
-
-@media (max-width: 420px) {
-  .admin-grid { grid-template-columns: 1fr; }
-  footer#main-footer { font-size: 10px; padding: 10px 12px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; }
-}
-</style>
-</head>
-
-<body>
-
-<!-- ══ TOPBAR ══════════════════════════════════════════════════════════ -->
-<header id="topbar" role="banner">
-
-  <div class="logo" aria-label="UDFNEWS">
-    <span class="u">UDF</span><span class="n">NEWS</span>
-    <span class="tagline">Portal Universitário</span>
-  </div>
-
-  <!-- Desktop nav -->
-  <nav id="main-nav" aria-label="Navegação principal">
-    <button class="tab-btn" aria-selected="true"  onclick="switchTab('map',this)"  role="tab">🌐 Mapa</button>
-    <button class="tab-btn" aria-selected="false" onclick="switchTab('feed',this)" role="tab">📰 Feed</button>
-    <button class="tab-btn admin-tab"             onclick="openAdmin()"            role="tab">⚙️ Admin</button>
-  </nav>
-
-  <!-- Zoom -->
-  <div class="zoom-controls" role="group" aria-label="Controles de zoom">
-    <button class="zoom-btn" onclick="adjustZoom(-0.15)" aria-label="Reduzir zoom" title="Zoom −">−</button>
-    <span id="zoom-val" aria-live="polite" aria-atomic="true">60%</span>
-    <button class="zoom-btn" onclick="adjustZoom(0.15)"  aria-label="Aumentar zoom" title="Zoom +">+</button>
-    <button class="zoom-btn" onclick="resetView()"       aria-label="Resetar visualização" title="Reset">⌂</button>
-  </div>
-
-  <button class="zoom-btn" onclick="toggleTheme()" aria-label="Alternar modo escuro" title="Modo escuro">🌙</button>
-
-  <!-- Hamburger (mobile) -->
-  <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" id="hamburger-btn">
-    <span></span><span></span><span></span>
-  </button>
-
-</header>
-
-<!-- ══ CANVAS ══════════════════════════════════════════════════════════ -->
-<main id="canvas-wrap" aria-label="Mapa interativo de círculos de interesse">
-  <div id="canvas" role="img" aria-label="Círculos de interesse universitários"></div>
-</main>
-
-<!-- ══ LEGEND ══════════════════════════════════════════════════════ -->
-<aside id="legend" aria-label="Legenda de níveis">
-  <div class="legend-item"><span class="legend-dot" style="background:#f5c800"></span>Universidade</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#0050b3"></span>Área — Exatas</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#e5006a"></span>Área — Humanas</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#00b341"></span>Área — Biológicas</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#ff6b00"></span>Semestre</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#7b2fff"></span>Curso</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#00c2e0"></span>Sala de Aula</div>
-</aside>
-
-<!-- ══ BREADCRUMB ══════════════════════════════════════════════════════ -->
-<nav id="breadcrumb" aria-label="Localização atual">
-  <strong>UDF</strong><span class="sep">›</span>Todos os Interesses
-</nav>
-
-<p id="hint" role="status" aria-live="polite">
-  🖱️ Role para zoom · Arraste para navegar · Clique nos círculos
-</p>
-
-<!-- ══ SIDE PANEL ══════════════════════════════════════════════════════ -->
-<aside id="panel" role="complementary" aria-label="Detalhes do grupo" aria-hidden="true">
-  <button class="panel-close" onclick="closePanel()" aria-label="Fechar painel">×</button>
-  <div id="panel-badge" class="panel-badge"></div>
-  <h2 id="panel-title"></h2>
-  <p  id="panel-desc"></p>
-  <div class="panel-divider"></div>
-  <section id="panel-news-list" aria-label="Notícias do grupo"></section>
-</aside>
-
-<!-- ══ MOBILE DRAWER ══════════════════════════════════════════════ -->
-<div id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
-  <div class="drawer-scrim" onclick="toggleDrawer()"></div>
-  <div class="drawer-content">
-    <button class="tab-btn" onclick="switchTab('map');  toggleDrawer()">🌐 Mapa de Interesses</button>
-    <button class="tab-btn" onclick="switchTab('feed'); toggleDrawer()">📰 Feed Geral</button>
-    <button class="tab-btn admin-tab" onclick="openAdmin(); toggleDrawer()">⚙️ Painel Admin</button>
-  </div>
-</div>
-
-<!-- ══ ADMIN PANEL ════════════════════════════════════════════════════ -->
-<section id="admin-panel" role="region" aria-label="Painel administrativo">
-
-  <header class="admin-header">
-    <div>
-      <h1 class="admin-title"><span>UDF</span>NEWS — Admin</h1>
-      <p class="admin-subtitle">Gerencie publicações e usuários delegados</p>
-    </div>
-    <button class="tab-btn" onclick="closeAdmin()">← Voltar ao Mapa</button>
-  </header>
-
-  <!-- Stats -->
-  <div class="stats-grid" role="group" aria-label="Estatísticas">
-    <div class="stat-card">
-      <p class="stat-label">Publicações</p>
-      <p class="stat-number" id="stat-news">0</p>
-      <p class="stat-sub">em todos os níveis</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Grupos</p>
-      <p class="stat-number">63</p>
-      <p class="stat-sub">geral + áreas + semestres + salas</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Representantes</p>
-      <p class="stat-number">24</p>
-      <p class="stat-sub">com acesso delegado</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Visualizações hoje</p>
-      <p class="stat-number">1.847</p>
-      <p class="stat-sub">em todas as plataformas</p>
-    </div>
-  </div>
-
-  <div class="admin-grid">
-
-    <!-- Publish form -->
-    <article class="admin-card">
-      <h2 class="admin-card-title">📢 Publicar Nova Notícia</h2>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-level">Nível de Destino</label>
-        <select class="form-select" id="pub-level" onchange="updatePubTargets()">
-          <option value="geral">🌐 Geral — Toda a Universidade</option>
-          <option value="area">📚 Área de Conhecimento</option>
-          <option value="semestre">🗓 Semestre da Área</option>
-          <option value="curso">🎓 Curso</option>
-          <option value="sala">🏫 Sala de Aula</option>
-        </select>
-      </div>
-
-      <div class="form-group" id="pub-target-group">
-        <label class="form-label" for="pub-target">Destino Específico</label>
-        <select class="form-select" id="pub-target"></select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-title">Título da Notícia</label>
-        <input class="form-input" id="pub-title" type="text" placeholder="Ex: Semana de Tecnologia 2025" maxlength="80">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-body">Conteúdo</label>
-        <textarea class="form-textarea" id="pub-body" placeholder="Descreva o evento ou informação..." maxlength="400"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-author">Autor / Publicador</label>
-        <input class="form-input" id="pub-author" type="text" placeholder="Nome ou setor" maxlength="50">
-      </div>
-
-      <button class="btn-primary" onclick="publishNews()">📤 Publicar Agora</button>
-    </article>
-
-  </div>
-
-</section>
-
-<!-- ══ LOGIN MODAL ══════════════════════════════════════════════════ -->
-<dialog id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
-  <div class="login-box">
-    <div class="login-logo" id="login-title"><span class="u">UDF</span><span class="n">NEWS</span></div>
-    <p class="login-sub">Acesso ao Painel Administrativo</p>
-    <div class="form-group">
-      <input class="form-input" id="login-user" type="text" placeholder="Usuário" maxlength="30">
-    </div>
-    <div class="form-group">
-      <input class="form-input" id="login-pass" type="password" placeholder="Senha" maxlength="30">
-    </div>
-    <button class="btn-primary" onclick="attemptLogin()">Entrar</button>
-    <p class="login-err" id="login-err"></p>
-    <p class="login-hint">Credenciais de teste: admin / 1234</p>
-  </div>
-</dialog>
-
-<!-- ══ TOAST ══════════════════════════════════════════════════════ -->
-<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
-
-<!-- ══ FOOTER ══════════════════════════════════════════════════════ -->
-<footer id="main-footer" role="contentinfo">
-  <p>Desenvolvido por <strong>Carlos Eduardo Andrade do Nascimento</strong> e <strong>João Rafael do Carmo Santos</strong> · Links de contato: <a href="https://github.com/Kdubsb" target="_blank" rel="noopener noreferrer">GitHub - Kdubsb</a> · <a href="https://github.com/docarmorafael" target="_blank" rel="noopener noreferrer">GitHub - docarmorafael</a></p>
-</footer>
-
-</body>
-</html>
+  box
