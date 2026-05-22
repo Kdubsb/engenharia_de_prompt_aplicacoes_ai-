@@ -22,7 +22,7 @@ A plataforma tem como principal objetivo servir como um ambiente de postagens ad
 
 ## ⚙️ Plataforma Utilizada
 
-- Nome da plataforma: Claude AI
+- Nome da plataforma: GitHub Copilot
 
 - Justificativa da escolha: Por ser a ferramenta mais indicada para programadores do mercado, tanto em front-end quanto em back-end e pela experiência com o Claude Haiku 4.5 no GitHub, percebeu-se que ela se enquadraria no desenvolvimento da plataforma como uma ferramenta rápida e eficiente. 
 
