@@ -2,15 +2,9 @@
 
 Projeto feito em colaboração com:
 
-[João Rafael do Carmo Santos](https://github.com/docarmorafael)
+João Rafael do Carmo Santos
 
 RGM: 47850094
-
----
-
-## Solução
-
-[UDF News]
 
 ---
 
