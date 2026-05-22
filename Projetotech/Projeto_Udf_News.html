@@ -1,1 +1,1492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="UDFNEWS — Portal de informações universitárias com sistema de círculos de interesse por área, semestre, curso e sala.">
+<meta name="theme-color" content="#0d1b47">
+<title>UDFNEWS — Portal Universitário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --blue:      #1a5ce5;
+  --blue-lt:   #3a7aff;
+  --blue-dk:   #0d1b47;
+  --blue-darker: #051028;
+  --red:       #e51a1a;
+  --red-lt:    #ff3a3a;
+  --yellow:    #f5c800;
+  --green:     #00b341;
+  --purple:    #7b2fff;
+  --orange:    #ff6b00;
+  --cyan:      #00c2e0;
+  --pink:      #e5006a;
+
+  --bg:        #0d1b47;
+  --surface:   #0f2460;
+  --card:      #132d66;
+  --card2:     #1a3a7d;
+  --border:    rgba(58,122,255,0.12);
+  --border2:   rgba(58,122,255,0.22);
+  --text:      #e8f0ff;
+  --muted:     rgba(232,240,255,0.60);
+  --faint:     rgba(232,240,255,0.30);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
+
+  --topbar-h: 56px;
+  --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { cursor: pointer; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--blue-lt);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ══════════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(58,122,255,0.25); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(58,122,255,0.45); }
+
+/* ══════════════════════════════════════════════════════
+   TOPBAR
+══════════════════════════════════════════════════════ */
+header#topbar {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 200;
+  height: var(--topbar-h);
+  background: rgba(13,27,71,0.94);
+  border-bottom: 1px solid var(--border2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: clamp(12px, 3vw, 24px);
+  gap: 12px;
+}
+
+/* Logo */
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(22px, 4vw, 30px);
+  letter-spacing: 2px;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.logo .u { color: var(--blue-lt); }
+.logo .n { color: var(--yellow); }
+.logo .tagline {
+  font-family: 'Nunito', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-top: -2px;
+}
+
+/* Nav */
+nav#main-nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+nav#main-nav::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-size: clamp(10px, 1.5vw, 12px);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.tab-btn:hover,
+.tab-btn[aria-selected="true"] {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+.tab-btn.admin-tab { border-color: rgba(255,107,0,0.5); color: var(--orange); }
+.tab-btn.admin-tab:hover,
+.tab-btn.admin-tab[aria-selected="true"] {
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+}
+
+/* Zoom controls */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.zoom-btn {
+  width: 30px; height: 30px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition);
+  line-height: 1;
+}
+.zoom-btn:hover { background: var(--blue); border-color: var(--blue); }
+#zoom-val {
+  min-width: 40px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+/* Hamburger (mobile) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 7px 8px;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+/* ══════════════════════════════════════════════════════
+   CANVAS WRAPPER
+══════════════════════════════════════════════════════ */
+main#canvas-wrap {
+  position: fixed;
+  inset-block-start: var(--topbar-h);
+  inset: var(--topbar-h) 0 0 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+main#canvas-wrap.grabbing { cursor: grabbing; }
+
+#canvas {
+  position: absolute;
+  width: 3600px;
+  height: 3200px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════════════════════
+   CIRCLES
+══════════════════════════════════════════════════════ */
+.circle-group {
+  position: absolute;
+  cursor: pointer;
+}
+.circle-bg {
+  position: absolute;
+  border-radius: 50%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.circle-group:hover .circle-bg {
+  transform: scale(1.035);
+}
+.circle-label {
+  position: absolute;
+  text-align: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  pointer-events: none;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.95);
+  line-height: 1.2;
+}
+.news-chip {
+  position: absolute;
+  background: rgba(13,27,71,0.75);
+  border-radius: 7px;
+  padding: 5px 7px;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #fff;
+  pointer-events: none;
+  overflow: hidden;
+  border: 1px solid rgba(58,122,255,0.20);
+  backdrop-filter: blur(4px);
+}
+.news-chip .nc-tag {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 2px;
+}
+.news-chip .nc-title {
+  font-weight: 700;
+  line-height: 1.25;
+}
+.news-chip .nc-time {
+  font-size: 7px;
+  opacity: 0.45;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════════════════
+   BREADCRUMB + HINT
+══════════════════════════════════════════════════════ */
+#breadcrumb {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(13,27,71,0.90);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-pill);
+  padding: 6px 18px;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  backdrop-filter: blur(14px);
+  z-index: 90;
+  pointer-events: none;
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#breadcrumb strong { color: var(--text); }
+#breadcrumb .sep { color: var(--faint); }
+
+#hint {
+  position: fixed;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26,92,229,0.18);
+  border: 1px solid rgba(26,92,229,0.35);
+  border-radius: var(--radius-md);
+  padding: 5px 16px;
+  font-size: 11px;
+  color: rgba(200,225,255,0.80);
+  z-index: 90;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDE PANEL
+══════════════════════════════════════════════════════ */
+aside#panel {
+  position: fixed;
+  inset-block: var(--topbar-h) 0;
+  inset-inline-end: 0;
+  width: min(360px, 100vw);
+  background: rgba(13,27,71,0.98);
+  border-left: 1px solid var(--border2);
+  z-index: 150;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 18px 30px;
+  backdrop-filter: blur(20px);
+}
+aside#panel.open { transform: translateX(0); }
+
+.panel-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.panel-close:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+.panel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+#panel-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(18px,3vw,24px);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+#panel-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.panel-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 16px;
+}
+
+.panel-news-item {
+  background: var(--card);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--blue);
+  transition: background var(--transition), transform 0.15s;
+}
+.panel-news-item:hover {
+  background: var(--card2);
+  transform: translateX(2px);
+}
+.pni-tag {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.pni-title {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+.pni-body {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.pni-meta {
+  font-size: 10px;
+  color: var(--faint);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--faint);
+  font-size: 13px;
+}
+.empty-state .es-icon { font-size: 32px; margin-bottom: 10px; }
+
+/* ══════════════════════════════════════════════════════
+   MOBILE DRAWER (nav)
+══════════════════════════════════════════════════════ */
+#mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+#mobile-drawer.open { pointer-events: all; }
+.drawer-scrim {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.6);
+  opacity: 0;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(4px);
+}
+#mobile-drawer.open .drawer-scrim { opacity: 1; }
+.drawer-content {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 260px;
+  background: var(--surface);
+  border-left: 1px solid var(--border2);
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  padding: 70px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#mobile-drawer.open .drawer-content { transform: translateX(0); }
+.drawer-content .tab-btn {
+  display: block;
+  text-align: left;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════════════════════ */
+section#admin-panel {
+  position: fixed;
+  inset: var(--topbar-h) 0 0 0;
+  background: var(--bg);
+  z-index: 190;
+  display: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 3vw, 28px);
+}
+section#admin-panel.open { display: block; }
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.admin-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(24px, 4vw, 34px);
+  letter-spacing: 2px;
+  line-height: 1;
+}
+.admin-title span { color: var(--orange); }
+.admin-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.stat-number {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--blue-lt);
+}
+.stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.admin-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 2.5vw, 22px);
+  border: 1px solid var(--border);
+}
+.admin-card-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* Form elements */
+.form-group { margin-bottom: 13px; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: rgba(58,122,255,0.08);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--faint);
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--blue-lt);
+  box-shadow: 0 0 0 3px rgba(58,122,255,0.25);
+}
+.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233a7aff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-select option { background: #132d66; color: var(--text); }
+.form-textarea { resize: vertical; min-height: 82px; line-height: 1.5; }
+
+.btn-primary {
+  background: var(--blue);
+  border: none;
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: var(--radius-md);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  transition: background var(--transition), transform 0.15s;
+  width: 100%;
+}
+.btn-primary:hover { background: var(--blue-lt); }
+.btn-primary:active { transform: scale(0.98); }
+
+/* News table */
+.news-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.news-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 380px;
+}
+.news-table th {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  background: rgba(58,122,255,0.08);
+}
+.news-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(58,122,255,0.10);
+  vertical-align: top;
+}
+.td-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.del-btn {
+  background: transparent;
+  border: 1px solid rgba(255,107,0,0.5);
+  color: var(--orange);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: background var(--transition), color var(--transition);
+}
+.del-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+/* ══════════════════════════════════════════════════════
+   LOGIN MODAL
+══════════════════════════════════════════════════════ */
+dialog#login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.80);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: none;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+}
+dialog#login-modal.open {
+  display: flex;
+}
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 5vw, 36px);
+  width: min(340px, 90vw);
+  text-align: center;
+}
+.login-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: 3px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.login-logo .u { color: var(--blue-lt); }
+.login-logo .n { color: var(--yellow); }
+.login-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.login-err {
+  color: var(--red-lt);
+  font-size: 12px;
+  margin-top: 10px;
+  display: none;
+}
+.login-hint {
+  margin-top: 14px;
+  font-size: 10px;
+  color: var(--faint);
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════��═══════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 999;
+  background: var(--green);
+  color: #fff;
+  padding: 11px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  transform: translateY(70px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  pointer-events: none;
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══════════════════════════════════════════════════════
+   LEVEL LEGEND
+══════════════════════════════════════════════════════ */
+#legend {
+  position: fixed;
+  top: calc(var(--topbar-h) + 12px);
+  left: 12px;
+  z-index: 80;
+  background: rgba(13,27,71,0.88);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  nav#main-nav { display: none; }
+  .hamburger { display: flex; }
+  .zoom-controls #zoom-val { display: none; }
+  .zoom-btn { width: 26px; height: 26px; font-size: 16px; }
+  #legend { display: none; }
+
+  aside#panel { width: 100vw; border-left: none; border-top: 1px solid var(--border2); }
+
+  #breadcrumb { bottom: 10px; font-size: 11px; padding: 5px 12px; }
+  #hint { bottom: 48px; font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ══ TOPBAR ══════════════════════════════════════════════════════════ -->
+<header id="topbar" role="banner">
+
+  <div class="logo" aria-label="UDFNEWS">
+    <span class="u">UDF</span><span class="n">NEWS</span>
+    <span class="tagline">Portal Universitário</span>
+  </div>
+
+  <!-- Desktop nav -->
+  <nav id="main-nav" aria-label="Navegação principal">
+    <button class="tab-btn" aria-selected="true"  onclick="switchTab('map',this)"  role="tab">🌐 Mapa</button>
+    <button class="tab-btn" aria-selected="false" onclick="switchTab('feed',this)" role="tab">📰 Feed</button>
+    <button class="tab-btn admin-tab"             onclick="openAdmin()"            role="tab">⚙️ Admin</button>
+  </nav>
+
+  <!-- Zoom -->
+  <div class="zoom-controls" role="group" aria-label="Controles de zoom">
+    <button class="zoom-btn" onclick="adjustZoom(-0.15)" aria-label="Reduzir zoom" title="Zoom −">−</button>
+    <span id="zoom-val" aria-live="polite" aria-atomic="true">60%</span>
+    <button class="zoom-btn" onclick="adjustZoom(0.15)"  aria-label="Aumentar zoom" title="Zoom +">+</button>
+    <button class="zoom-btn" onclick="resetView()"       aria-label="Resetar visualização" title="Reset">⌂</button>
+  </div>
+
+  <!-- Hamburger (mobile) -->
+  <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" id="hamburger-btn">
+    <span></span><span></span><span></span>
+  </button>
+
+</header>
+
+<!-- ══ CANVAS ══════════════════════════════════════════════════════════ -->
+<main id="canvas-wrap" aria-label="Mapa interativo de círculos de interesse">
+  <div id="canvas" role="img" aria-label="Círculos de interesse universitários"></div>
+</main>
+
+<!-- ══ LEGEND ══════════════════════════════════════════════════════════ -->
+<aside id="legend" aria-label="Legenda de níveis">
+  <div class="legend-item"><span class="legend-dot" style="background:#f5c800"></span>Universidade</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#1a5ce5"></span>Área — Exatas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#e5006a"></span>Área — Humanas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00b341"></span>Área — Biológicas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#ff6b00"></span>Semestre</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#7b2fff"></span>Curso</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00c2e0"></span>Sala de Aula</div>
+</aside>
+
+<!-- ══ BREADCRUMB ══════════════════════════════════════════════════════ -->
+<nav id="breadcrumb" aria-label="Localização atual">
+  <strong>UDF</strong><span class="sep">›</span>Todos os Interesses
+</nav>
+
+<p id="hint" role="status" aria-live="polite">
+  🖱️ Role para zoom · Arraste para navegar · Clique nos círculos
+</p>
+
+<!-- ══ SIDE PANEL ══════════════════════════════════════════════════════ -->
+<aside id="panel" role="complementary" aria-label="Detalhes do grupo" aria-hidden="true">
+  <button class="panel-close" onclick="closePanel()" aria-label="Fechar painel">×</button>
+  <div id="panel-badge" class="panel-badge"></div>
+  <h2 id="panel-title"></h2>
+  <p  id="panel-desc"></p>
+  <div class="panel-divider"></div>
+  <section id="panel-news-list" aria-label="Notícias do grupo"></section>
+</aside>
+
+<!-- ══ MOBILE DRAWER ══════════════════════════════════════════════════ -->
+<div id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
+  <div class="drawer-scrim" onclick="toggleDrawer()"></div>
+  <div class="drawer-content">
+    <button class="tab-btn" onclick="switchTab('map'); toggleDrawer()">🌐 Mapa de Interesses</button>
+    <button class="tab-btn" onclick="switchTab('feed'); toggleDrawer()">📰 Feed Geral</button>
+    <button class="tab-btn admin-tab" onclick="openAdmin(); toggleDrawer()">⚙️ Painel Admin</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ════════════════════════════════════════════════════ -->
+<section id="admin-panel" role="region" aria-label="Painel administrativo">
+
+  <header class="admin-header">
+    <div>
+      <h1 class="admin-title"><span>UDF</span>NEWS — Admin</h1>
+      <p class="admin-subtitle">Gerencie publicações e usuários delegados</p>
+    </div>
+    <button class="tab-btn" onclick="closeAdmin()">← Voltar ao Mapa</button>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-grid" role="group" aria-label="Estatísticas">
+    <div class="stat-card">
+      <p class="stat-label">Publicações</p>
+      <p class="stat-number" id="stat-news">0</p>
+      <p class="stat-sub">em todos os níveis</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Grupos</p>
+      <p class="stat-number">63</p>
+      <p class="stat-sub">geral + áreas + semestres + salas</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Representantes</p>
+      <p class="stat-number">24</p>
+      <p class="stat-sub">com acesso delegado</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Visualizações hoje</p>
+      <p class="stat-number">1.847</p>
+      <p class="stat-sub">em todas as plataformas</p>
+    </div>
+  </div>
+
+  <div class="admin-grid">
+
+    <!-- Publish form -->
+    <article class="admin-card">
+      <h2 class="admin-card-title">📢 Publicar Nova Notícia</h2>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-level">Nível de Destino</label>
+        <select class="form-select" id="pub-level" onchange="updatePubTargets()">
+          <option value="geral">🌐 Geral — Toda a Universidade</option>
+          <option value="area">📚 Área de Conhecimento</option>
+          <option value="semestre">🗓 Semestre da Área</option>
+          <option value="curso">🎓 Curso</option>
+          <option value="sala">🏫 Sala de Aula</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="pub-target-group">
+        <label class="form-label" for="pub-target">Destino Específico</label>
+        <select class="form-select" id="pub-target"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-title">Título da Notícia</label>
+        <input class="form-input" id="pub-title" type="text" placeholder="Ex: Semana de Tecnologia 2025" maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-body">Conteúdo</label>
+        <textarea class="form-textarea" id="pub-body" placeholder="Descreva o evento ou informação..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-author">Autor / Publicador</label>
+        <input class="form-input" id="pub-author" type="text" placeholder="Nome ou setor" maxlength="50">
+      </div>
+
+      <button class="btn-primary" onclick="publishNews()">📤 Publicar Agora</button>
+    </article>
+
+    <!-- News list -->
+    <article class="admin-card">
+      <h2 class="admin-card-title">📋 Publicações Recentes</h2>
+      <div class="news-table-wrap">
+        <table class="news-table" aria-label="Lista de publicações">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Nível</th>
+              <th>Destino</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="admin-news-list"></tbody>
+        </table>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ══ LOGIN MODAL ════════════════════════════════════════════════════ -->
+<dialog id="login-modal" aria-modal="true" aria-label="Login de administrador">
+  <div class="login-box">
+    <p class="login-logo"><span class="u">UDF</span><span class="n">NEWS</span></p>
+    <p class="login-sub">Acesso Administrador / Representante</p>
+
+    <div class="form-group">
+      <label class="form-label" for="login-user">Usuário</label>
+      <input class="form-input" id="login-user" type="text" value="admin" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="login-pass">Senha</label>
+      <input class="form-input" id="login-pass" type="password" value="udf2025" autocomplete="current-password">
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <p class="login-err" id="login-err" role="alert">Usuário ou senha incorretos.</p>
+    <p class="login-hint">Demo: admin / udf2025</p>
+  </div>
+</dialog>
+
+<!-- ══ TOAST ══════════════════════════════════════════════════════════ -->
+<div id="toast" role="status" aria-live="polite" aria-atomic="true">✅ Publicado com sucesso!</div>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── DATA ────────────────────────────────────────────────────────── */
+const AREAS = [
+  { id:'exatas',  name:'Ciências Exatas',    color:'#1a5ce5', bg:'rgba(26,92,229,0.16)',   icon:'⚡' },
+  { id:'humanas', name:'Ciências Humanas',   color:'#e5006a', bg:'rgba(229,0,106,0.16)',   icon:'📖' },
+  { id:'bio',     name:'Ciências Biológicas',color:'#00b341', bg:'rgba(0,179,65,0.16)',    icon:'🌱' },
+];
+const CURSOS = {
+  exatas:  ['Eng. Software','Matemática','Física','Ciênc. Comp.'],
+  humanas: ['Direito','Filosofia','Letras','Pedagogia'],
+  bio:     ['Biomedicina','Farmácia','Nutrição','Biologia'],
+};
+const LEVEL_META = {
+  geral:    { color:'#f5c800', label:'Geral' },
+  area:     { color:'#1a5ce5', label:'Área'  },
+  semestre: { color:'#ff6b00', label:'Semestre' },
+  curso:    { color:'#7b2fff', label:'Curso' },
+  sala:     { color:'#00c2e0', label:'Sala'  },
+};
+
+let NEWS = [
+  { id:1,  level:'geral',    target:'geral',                  title:'Semana da Inovação UDF 2025',             body:'Inscrições abertas para o maior evento de tecnologia e empreendedorismo da faculdade. Haverá palestras, hackathon e feira de projetos.',                  author:'Reitoria',          time:'há 2h',    color:'#f5c800' },
+  { id:2,  level:'geral',    target:'geral',                  title:'Restaurante Universitário — novos horários', body:'A partir de segunda-feira, o RU funcionará das 11h às 15h e das 18h às 21h. O cardápio vegetariano foi ampliado.',                                   author:'Administração',     time:'há 5h',    color:'#f5c800' },
+  { id:3,  level:'geral',    target:'geral',                  title:'Resultado do Processo Seletivo de Monitoria', body:'Confira no portal acadêmico os aprovados para as vagas de monitoria do 2º semestre de 2025.',                                                      author:'Pró-Reitoria',      time:'ontem',    color:'#f5c800' },
+  { id:4,  level:'area',     target:'exatas',                 title:'Olimpíada de Matemática UDF — Inscrições', body:'Etapa interna acontece em 15/08. Podem participar alunos de todos os períodos de Exatas.',                                                            author:'Coord. Exatas',     time:'há 3h',    color:'#1a5ce5' },
+  { id:5,  level:'area',     target:'exatas',                 title:'Lab de Robótica abre vagas para IC',       body:'Equipe de pesquisa está aceitando alunos de graduação para iniciação científica em IA e Robótica.',                                                    author:'Pesquisa UDF',      time:'há 6h',    color:'#1a5ce5' },
+  { id:6,  level:'area',     target:'humanas',                title:'Ciclo de Palestras: Filosofia Contemporânea', body:'Prof. Dr. Marcos Alves ministra série sobre Ética Digital. Início: quarta às 19h. Entrada gratuita.',                                              author:'Coord. Humanas',    time:'há 4h',    color:'#e5006a' },
+  { id:7,  level:'area',     target:'humanas',                title:'Simulado OAB gratuito para alunos de Direito', body:'Parceria com escritório Pinto & Alves oferece simulado presencial gratuito no sábado às 8h.',                                                    author:'Coord. Direito',    time:'há 1h',    color:'#e5006a' },
+  { id:8,  level:'area',     target:'bio',                    title:'Semana da Biologia — DNA Day 2025',        body:'Exposição interativa sobre genética, biotecnologia e medicina. Entrada gratuita para todos os alunos.',                                                author:'Coord. Bio',        time:'há 7h',    color:'#00b341' },
+  { id:9,  level:'area',     target:'bio',                    title:'Novo laboratório de microbiologia inaugurado', body:'Instalações modernas com equipamentos de última geração disponíveis para aulas práticas a partir desta semana.',                                   author:'Infraestrutura',    time:'há 2h',    color:'#00b341' },
+  { id:10, level:'semestre', target:'exatas-1',               title:'Boas-vindas calouros Exatas — 1º Sem',    body:'Recepção na quinta às 9h no auditório principal. Presença obrigatória. Traga documento com foto.',                                                      author:'Centro Acadêmico',  time:'há 1h',    color:'#ff6b00' },
+  { id:11, level:'semestre', target:'exatas-4',               title:'Estágio supervisionado — prazo final',    body:'Documentação deve ser entregue na secretaria até 30/07. Não haverá prorrogação de prazo.',                                                              author:'Coord. Exatas',     time:'há 3h',    color:'#ff6b00' },
+  { id:12, level:'semestre', target:'humanas-3',              title:'Excursão pedagógica ao STF',              body:'Visita ao Supremo Tribunal Federal em 20/08. Vagas limitadas a 30 alunos. Inscreva-se na secretaria!',                                                  author:'Rep. Turma 3H',     time:'há 2h',    color:'#ff6b00' },
+  { id:13, level:'semestre', target:'bio-5',                  title:'Aula prática no Laboratório Central',     body:'5º semestre terá aula especial no Laboratório Central com microscopia eletrônica. Uso de jaleco obrigatório.',                                          author:'Coord. Bio',        time:'há 4h',    color:'#ff6b00' },
+  { id:14, level:'curso',    target:'Eng. Software',          title:'Hackathon UDF Soft — Equipes Abertas',   body:'Hackathon de 48h com tema IA para Inclusão Social. Monte sua equipe e inscreva-se. Premiação de R$ 3.000.',                                               author:'Coord. Eng. Soft',  time:'há 30min', color:'#7b2fff' },
+  { id:15, level:'curso',    target:'Direito',                title:'Julgamento Simulado — LGPD',             body:'Alunos do 5º período participam de tribunal simulado sobre caso real de violação de dados pessoais.',                                                     author:'Prof. Carvalho',    time:'há 2h',    color:'#7b2fff' },
+  { id:16, level:'curso',    target:'Biomedicina',            title:'Projeto de Extensão: Saúde Comunitária', body:'Alunos de Biomedicina realizam coleta de exames gratuitos em comunidades vulneráveis. Cadastre-se!',                                                     author:'Coord. Extensão',   time:'há 4h',    color:'#7b2fff' },
+  { id:17, level:'curso',    target:'Matemática',             title:'Palestra: Matemática Financeira Aplicada', body:'Prof. Ana Lima apresenta aplicações de cálculo diferencial em finanças e mercado de capitais. Amanhã às 10h.',                                         author:'Prof. Ana Lima',    time:'há 1h',    color:'#7b2fff' },
+  { id:18, level:'sala',     target:'Eng. Sof T1-S3',        title:'Prova AV2 — Eng. de Requisitos amanhã', body:'Conteúdo: UML, casos de uso, histórias de usuário. Prof. Ribeiro confirmou prova para 8h. Sala 302.',                                                     author:'Rep. Turma',        time:'há 1h',    color:'#00c2e0' },
+  { id:19, level:'sala',     target:'Eng. Sof T2-S3',        title:'Material POO disponível no portal',      body:'Prof. Fernanda postou slides e exercícios resolvidos de Programação Orientada a Objetos para revisão.',                                                  author:'Rep. Turma',        time:'há 3h',    color:'#00c2e0' },
+  { id:20, level:'sala',     target:'Direito T1-S2',          title:'Aula de Processo Civil cancelada',       body:'Prof. Lima está em congresso. Reposição na próxima sexta às 18h. Avise os colegas do grupo!',                                                            author:'Rep. Turma',        time:'há 45min', color:'#00c2e0' },
+  { id:21, level:'sala',     target:'Biomedi T3-S5',          title:'Relatório de Bioquímica — entrega hoje', body:'Relatório da aula prática de metabolismo lipídico vence hoje às 23h59. Envie pelo portal acadêmico.',                                                    author:'Rep. Turma',        time:'há 20min', color:'#00c2e0' },
+];
+let nextId = 22;
+let isAdmin = false;
+
+/* ── CANVAS & TRANSFORM ─────────────────────────────────────────── */
+const wrap   = document.getElementById('canvas-wrap');
+const canvas = document.getElementById('canvas');
+let scale = 0.55, tx = -320, ty = -220;
+let dragging = false, lastX = 0, lastY = 0;
+let lastTouchDist = 0;
+
+function applyTransform() {
+  canvas.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  document.getElementById('zoom-val').textContent = Math.round(scale * 100) + '%';
+}
+
+/* Mouse drag */
+wrap.addEventListener('mousedown', e => {
+  if (e.target.closest('.circle-group')) return;
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  wrap.classList.add('grabbing');
+});
+window.addEventListener('mouseup', () => { dragging = false; wrap.classList.remove('grabbing'); });
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  tx += e.clientX - lastX; ty += e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  applyTransform();
+});
+
+/* Wheel zoom */
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const d = e.deltaY > 0 ? -0.09 : 0.09;
+  const rect = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const prev = scale;
+  scale = Math.max(0.12, Math.min(2.8, scale + d));
+  tx = mx - (mx - tx) * (scale / prev);
+  ty = my - (my - ty) * (scale / prev);
+  applyTransform();
+}, { passive: false });
+
+/* Touch pan + pinch-zoom */
+wrap.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1 && !e.target.closest('.circle-group')) {
+    dragging = true;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+wrap.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    const ratio = dist / (lastTouchDist || dist);
+    const rect = wrap.getBoundingClientRect();
+    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+    const prev = scale;
+    scale = Math.max(0.12, Math.min(2.8, scale * ratio));
+    tx = mx - (mx - tx) * (scale / prev);
+    ty = my - (my - ty) * (scale / prev);
+    lastTouchDist = dist;
+    applyTransform();
+  } else if (dragging && e.touches.length === 1) {
+    e.preventDefault();
+    tx += e.touches[0].clientX - lastX;
+    ty += e.touches[0].clientY - lastY;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+    applyTransform();
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchend', () => { dragging = false; });
+
+function adjustZoom(d) {
+  scale = Math.max(0.12, Math.min(2.8, scale + d));
+  applyTransform();
+}
+function resetView() {
+  scale = 0.55; tx = -320; ty = -220; applyTransform();
+}
+
+/* ── HELPERS ────────────────────────────────────────────────────── */
+function getNews(level, target) {
+  if (level === 'geral')    return NEWS.filter(n => n.level === 'geral');
+  if (level === 'area')     return NEWS.filter(n => n.level === 'area'     && n.target === target);
+  if (level === 'semestre') return NEWS.filter(n => n.level === 'semestre' && n.target === target);
+  if (level === 'curso')    return NEWS.filter(n => n.level === 'curso'    && n.target === target);
+  if (level === 'sala')     return NEWS.filter(n => n.level === 'sala'     && n.target === target);
+  return [];
+}
+
+function el(tag, cls, css) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (css) e.style.cssText = css;
+  return e;
+}
+
+/* ── CIRCLE BUILDER ─────────────────────────────────────────────── */
+function makeNewsChip(news, x, y, w, h) {
+  const d = el('div', 'news-chip', `left:${x}px;top:${y}px;width:${w}px;max-height:${h}px;border-left-color:${news.color}`);
+  d.innerHTML = `<div class="nc-tag" style="color:${news.color}">${LEVEL_META[news.level]?.label || news.level}</div><div class="nc-title">${news.title}</div><div class="nc-time">${news.time}</div>`;
+  return d;
+}
+
+function chipPositions(count, size, pad, cw, ch) {
+  const angles = [-110, -70, 70, 110].map(a => a * Math.PI / 180);
+  const r = size / 2 - pad - cw / 2 - 8;
+  const cx = size / 2, cy = size / 2;
+  return Array.from({ length: count }, (_, i) => ({
+    x: cx + r * Math.cos(angles[i] || 0) - cw / 2,
+    y: cy + r * Math.sin(angles[i] || 0) - ch / 2,
+  }));
+}
+
+function makeCircle(cfg) {
+  const g = el('div', 'circle-group', `left:${cfg.x}px;top:${cfg.y}px;width:${cfg.size}px;height:${cfg.size}px;`);
+  g.setAttribute('role', 'button');
+  g.setAttribute('aria-label', `${cfg.name} — clique para ver notícias`);
+  g.setAttribute('tabindex', '0');
+
+  // background
+  const bg = el('div', 'circle-bg', `width:${cfg.size}px;height:${cfg.size}px;background:${cfg.bg};border:2px solid ${cfg.color}35;`);
+  g.appendChild(bg);
+
+  // inner ring
+  const ring = el('div', '', `position:absolute;inset:5px;border-radius:50%;border:1px solid ${cfg.color}18;pointer-events:none;`);
+  g.appendChild(ring);
+
+  // chips
+  const items = getNews(cfg.level, cfg.target);
+  if (items.length && cfg.size >= 130) {
+    const cw = Math.min(cfg.size * 0.33, 108);
+    const ch = 56;
+    const pad = cfg.size * 0.11;
+    chipPositions(Math.min(items.length, 4), cfg.size, pad, cw, ch).forEach((pos, i) => {
+      g.appendChild(makeNewsChip(items[i], pos.x, pos.y, cw, ch));
+    });
+  }
+
+  // label
+  const ls  = Math.max(9, Math.min(cfg.size * 0.082, 22));
+  const lbl = el('div', 'circle-label', `left:50%;bottom:${Math.max(8, cfg.size * 0.09)}px;transform:translateX(-50%);font-size:${ls}px;color:${cfg.color};width:92%;text-align:center;`);
+  lbl.textContent = (cfg.icon ? cfg.icon + ' ' : '') + cfg.name;
+  g.appendChild(lbl);
+
+  g.addEventListener('click', e => { e.stopPropagation(); openPanel(cfg); });
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPanel(cfg); } });
+
+  return g;
+}
+
+/* ── BUILD MAP ──────────────────────────────────────────────────── */
+function buildMap() {
+  canvas.innerHTML = '';
+
+  const CX = 1800, CY = 1600;
+
+  // GERAL
+  const gS = 720;
+  canvas.appendChild(makeCircle({
+    x: CX - gS/2, y: CY - gS/2, size: gS,
+    level:'geral', target:'geral',
+    name:'UNIVERSIDADE UDF', color:'#f5c800',
+    bg:'rgba(245,200,0,0.07)', icon:'🏛️'
+  }));
+
+  // AREA offsets
+  const aPos = [
+    { dx: -900, dy: -100 },  // exatas (left)
+    { dx:    0, dy: -860 },  // humanas (top)
+    { dx:  900, dy: -100 },  // bio (right)
+  ];
+  const aS = 500;
+
+  AREAS.forEach((area, ai) => {
+    const ap = aPos[ai];
+    const ax = CX + ap.dx - aS/2;
+    const ay = CY + ap.dy - aS/2;
+
+    canvas.appendChild(makeCircle({
+      x: ax, y: ay, size: aS,
+      level:'area', target: area.id,
+      name: area.name, color: area.color,
+      bg: area.bg, icon: area.icon
+    }));
+
+    // SEMESTRES (8 ao redor da área)
+    const sS = 190, sR = 330;
+    for (let s = 1; s <= 8; s++) {
+      const ang = (s - 1) * (Math.PI * 2 / 8) - Math.PI / 2;
+      const sx = ax + aS/2 + sR * Math.cos(ang) - sS/2;
+      const sy = ay + aS/2 + sR * Math.sin(ang) - sS/2;
+
+      canvas.appendChild(makeCircle({
+        x: sx, y: sy, size: sS,
+        level:'semestre', target:`${area.id}-${s}`,
+        name:`${s}º Sem`, color:'#ff6b00',
+        bg:'rgba(255,107,0,0.13)', icon:''
+      }));
+
+      // CURSOS (4 ao redor do semestre)
+      const cS = 66, cR = 76;
+      CURSOS[area.id].forEach((curso, ci) => {
+        const cang = ci * (Math.PI / 2) + Math.PI / 4;
+        const ccx = sx + sS/2 + cR * Math.cos(cang) - cS/2;
+        const ccy = sy + sS/2 + cR * Math.sin(cang) - cS/2;
+
+        canvas.appendChild(makeCircle({
+          x: ccx, y: ccy, size: cS,
+          level:'curso', target: curso,
+          name: curso.split(' ')[0], color:'#7b2fff',
+          bg:'rgba(123,47,255,0.20)', icon:''
+        }));
+
+        // SALAS (4 ao redor do curso)
+        const rS = 30, rR = 28;
+        for (let rm = 1; rm <= 4; rm++) {
+          const rang = (rm - 1) * (Math.PI / 2);
+          const rrx = ccx + cS/2 + rR * Math.cos(rang) - rS/2;
+          const rry = ccy + cS/2 + rR * Math.sin(rang) - rS/2;
+          const salaTarget = `${curso.substring(0, 8).trim()} T${rm}-S${s}`;
+
+          canvas.appendChild(makeCircle({
+            x: rrx, y: rry, size: rS,
+            level:'sala', target: salaTarget,
+            name:`T${rm}`, color:'#00c2e0',
+            bg:'rgba(0,194,224,0.22)', icon:''
+          }));
+        }
+      });
+    }
+  });
+
+  updateStatNews();
+}
+
+/* ── PANEL ──────────────────────────────────────────────────────── */
+function openPanel(cfg) {
+  const items = getNews(cfg.level, cfg.target);
+  const lm = LEVEL_META[cfg.level] || { color: cfg.color, label: cfg.level };
+
+  const badge = document.getElementById('panel-badge');
+  badge.textContent = `${lm.label} · ${cfg.name}`;
+  badge.style.cssText = `background:${cfg.color}1f;color:${cfg.color};`;
+
+  document.getElementById('panel-title').textContent = cfg.name;
+  document.getElementById('panel-desc').textContent =
+    items.length ? `${items.length} publicação(ões) neste grupo` : 'Nenhuma publicação neste grupo ainda.';
+
+  const list = document.getElementById('panel-news-list');
+  list.innerHTML = '';
+
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><p class="es-icon">📭</p><p>Sem notícias aqui ainda.</p></div>';
+  } else {
+    items.forEach(n => {
+      const d = el('article', 'panel-news-item');
+      d.style.borderLeftColor = n.color;
+      d.innerHTML = `
+        <p class="pni-tag" style="color:${n.color}">${LEVEL_META[n.level]?.label || n.level}</p>
+        <h3 class="pni-title">${n.title}</h3>
+        <p  class="pni-body">${n.body}</p>
+        <p  class="pni-meta"><span>✍️ ${n.author}</span><span>${n.time}</span></p>
+      `;
+      list.appendChild(d);
+    });
+  }
+
+  const panel = document.getElementById('panel');
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  updateBreadcrumb(cfg);
+}
+
+function closePanel() {
+  const panel = document.getElementById('panel');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  document.getElementById('breadcrumb').innerHTML = '<strong>UDF</strong><span class="sep">›</span>Todos os Interesses';
+}
+
+function updateBreadcrumb(cfg) {
+  const lm = LEVEL_META[cfg.level] || { label: cfg.level };
+  document.getElementById('breadcrumb').innerHTML =
+    `<strong>UDF</strong><span class="sep">›</span><strong>${lm.label}</strong><span class="sep">›</span>${cfg.name}`;
+}
+
+/* ── ADMIN ──────────────────────────────────────────────────────── */
+function openAdmin() {
+  if (!isAdmin) { document.getElementById('login-modal').classList.add('open'); return; }
+  document.getElementById('admin-panel').classList.add('open');
+  renderAdminNews();
+  updatePubTargets();
+}
+function closeAdmin() {
+  document.getElementById('admin-panel').classList.remove('open');
+  buildMap();
+}
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if (u === 'admin' && p === 'udf2025') {
+    isAdmin = true;
+    err.style.display = 'none';
+    document.getElementById('login-modal').classList.remove('open');
+    openAdmin();
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+/* Enter key on login */
+['login-user','login-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+function updatePubTargets() {
+  const level = document.getElementById('pub-level').value;
+  const sel   = document.getElementById('pub-target');
+  sel.innerHTML = '';
+  const map = {
+    geral:    ['geral'],
+    area:     AREAS.map(a => a.id),
+    semestre: AREAS.flatMap(a => Array.from({length:8},(_,i)=>`${a.id}-${i+1}`)),
+    curso:    Object.values(CURSOS).flat(),
+    sala:     AREAS.flatMap(a => CURSOS[a.id].flatMap(c => Array.from({length:4},(_,i)=>`${c.substring(0,8).trim()} T${i+1}-S1`))),
+  };
+  (map[level] || []).forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = opt.textContent = o;
+    sel.appendChild(opt);
+  });
+}
+
+function publishNews() {
+  const level  = document.getElementById('pub-level').value;
+  const target = document.getElementById('pub-target').value;
+  const title  = document.getElementById('pub-title').value.trim();
+  const body   = document.getElementById('pub-body').value.trim();
+  const author = document.getElementById('pub-author').value.trim() || 'Administrador';
+  if (!title || !body) { alert('Preencha o título e o conteúdo da notícia.'); return; }
+
+  const colorMap = {
+    geral:    '#f5c800',
+    area:     AREAS.find(a => a.id === target)?.color || '#1a5ce5',
+    semestre: '#ff6b00',
+    curso:    '#7b2fff',
+    sala:     '#00c2e0',
+  };
+
+  NEWS.unshift({ id: nextId++, level, target, title, body, author, time: 'agora', color: colorMap[level] || '#f5c800' });
+  document.getElementById('pub-title').value = '';
+  document.getElementById('pub-body').value  = '';
+
+  renderAdminNews();
+  updateStatNews();
+  buildMap();
+  showToast();
+}
+
+function deleteNews(id) {
+  NEWS = NEWS.filter(n => n.id !== id);
+  renderAdminNews();
+  updateStatNews();
+  buildMap();
+}
+
+function renderAdminNews() {
+  const tbody = document.getElementById('admin-news-list');
+  tbody.innerHTML = '';
+  NEWS.slice(0, 25).forEach(n => {
+    const lm  = LEVEL_META[n.level] || { color: n.color, label: n.level };
+    const tr  = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:700;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</td>
+      <td><span class="td-badge" style="background:${lm.color}22;color:${lm.color}">${lm.label}</span></td>
+      <td style="font-size:11px;color:var(--muted);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.target}</td>
+      <td><button class="del-btn" onclick="deleteNews(${n.id})" aria-label="Excluir publicação">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateStatNews() {
+  document.getElementById('stat-news').textContent = NEWS.length;
+}
+
+/* ── TOAST ──────────────────────────────────────────────────────── */
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ── TABS & DRAWER ──────────────────────────────────────────────── */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn:not(.admin-tab)').forEach(b => b.setAttribute('aria-selected','false'));
+  if (btn) btn.setAttribute('aria-selected','true');
+}
+
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  const d   = document.getElementById('mobile-drawer');
+  const btn = document.getElementById('hamburger-btn');
+  d.classList.toggle('open', drawerOpen);
+  d.setAttribute('aria-hidden', !drawerOpen);
+  btn.setAttribute('aria-expanded', drawerOpen);
+}
+
+/* close panel on outside click */
+document.getElementById('canvas-wrap').addEventListener('click', e => {
+  if (!e.target.closest('.circle-group')) closePanel();
+});
+
+/* ── HINT FADE ──────────────────────────────────────────────────── */
+setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 5500);
+
+/* ── INIT ───────────────────────────────────────────────────────── */
+buildMap();
+applyTransform();
+updatePubTargets();
+</script>
+</body>
+</html>
 
