@@ -34,7 +34,7 @@
   --card2:     #f0f0f0;
   --border:    rgba(0,0,0,0.08);
   --border2:   rgba(0,0,0,0.14);
-  --text:      #1a1a1a;
+  --text: #1a1a1a;
   --muted:     rgba(26,26,26,0.65);
   --faint:     rgba(26,26,26,0.40);
 
@@ -45,7 +45,6 @@
   --radius-pill: 999px;
 
   --topbar-h: 56px;
-  --footer-h: 34px;
   --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
@@ -66,8 +65,7 @@
 [data-theme="dark"] #breadcrumb,
 [data-theme="dark"] #legend,
 [data-theme="dark"] .login-box,
-[data-theme="dark"] .news-chip,
-[data-theme="dark"] footer#main-footer {
+[data-theme="dark"] .news-chip {
   background: rgba(23,26,33,0.95);
 }
 [data-theme="dark"] main#canvas-wrap {
@@ -234,7 +232,7 @@ nav#main-nav::-webkit-scrollbar { display: none; }
 main#canvas-wrap {
   position: fixed;
   inset-block-start: var(--topbar-h);
-  inset: var(--topbar-h) 0 var(--footer-h) 0;
+  inset: var(--topbar-h) 0 0 0;
   overflow: hidden;
   cursor: grab;
   touch-action: none;
@@ -316,7 +314,7 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
 ══════════════════════════════════════════════════════ */
 #breadcrumb {
   position: fixed;
-  bottom: calc(var(--footer-h) + 12px);
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(255,255,255,0.92);
@@ -338,14 +336,13 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: bottom 0.2s;
 }
 #breadcrumb strong { color: var(--text); }
 #breadcrumb .sep { color: var(--faint); }
 
 #hint {
   position: fixed;
-  bottom: calc(var(--footer-h) + 52px);
+  bottom: 56px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0,80,179,0.08);
@@ -356,7 +353,7 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
   color: var(--blue);
   z-index: 90;
   pointer-events: none;
-  transition: opacity 0.8s ease, bottom 0.2s;
+  transition: opacity 0.8s ease;
   white-space: nowrap;
   font-weight: 600;
 }
@@ -366,7 +363,7 @@ main#canvas-wrap.grabbing { cursor: grabbing; }
 ══════════════════════════════════════════════════════ */
 aside#panel {
   position: fixed;
-  inset-block: var(--topbar-h) var(--footer-h);
+  inset-block: var(--topbar-h) 0;
   inset-inline-end: 0;
   width: min(360px, 100vw);
   background: rgba(255,255,255,0.98);
@@ -525,7 +522,7 @@ aside#panel.open { transform: translateX(0); }
 ══════════════════════════════════════════════════════ */
 section#admin-panel {
   position: fixed;
-  inset: var(--topbar-h) 0 var(--footer-h) 0;
+  inset: var(--topbar-h) 0 0 0;
   background: var(--bg);
   z-index: 190;
   display: none;
@@ -533,7 +530,7 @@ section#admin-panel {
   overscroll-behavior: contain;
   padding: clamp(16px, 3vw, 28px);
 }
-section#admin-panel.open { display: block; }
+section#admin-panel.open { block; }
 
 .admin-header {
   display: flex;
@@ -568,4 +565,964 @@ section#admin-panel.open { display: block; }
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   border: 1px solid var(--border);
-  box
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.stat-number {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--blue);
+}
+.stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.admin-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 2.5vw, 22px);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.admin-card-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* Form elements */
+.form-group { margin-bottom: 13px; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,80,179,0.12);
+}
+.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-select option { background: #ffffff; color: var(--text); }
+.form-textarea { resize: vertical; min-height: 82px; line-height: 1.5; }
+
+.btn-primary {
+  background: var(--blue);
+  border: none;
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: var(--radius-md);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  transition: background var(--transition), transform 0.15s;
+  width: 100%;
+}
+.btn-primary:hover { background: var(--blue-dk); }
+.btn-primary:active { transform: scale(0.98); }
+
+/* News table */
+.news-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.news-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 380px;
+}
+.news-table th {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.news-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  vertical-align: top;
+}
+.td-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.del-btn {
+  background: transparent;
+  border: 1px solid rgba(229,26,26,0.4);
+  color: var(--red);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: background var(--transition), color var(--transition);
+}
+.del-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* ══════════════════════════════════════════════════════
+   LOGIN MODAL
+══════════════════════════════════════════════════════ */
+dialog#login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.50);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: none;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+}
+dialog#login-modal.open {
+  display: flex;
+}
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 5vw, 36px);
+  width: min(340px, 90vw);
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+.login-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: 3px;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.login-logo .u { color: var(--blue); }
+.login-logo .n { color: var(--red); }
+.login-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.login-err {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 10px;
+  display: none;
+}
+.login-hint {
+  margin-top: 14px;
+  font-size: 10px;
+  color: var(--faint);
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 999;
+  background: var(--green);
+  color: #fff;
+  padding: 11px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  transform: translateY(70px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,179,65,0.25);
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══════════════════════════════════════════════════════
+   LEVEL LEGEND
+══════════════════════════════════════════════════════ */
+#legend {
+  position: fixed;
+  top: calc(var(--topbar-h) + 12px);
+  left: 12px;
+  z-index: 80;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  nav#main-nav { display: none; }
+  .hamburger { display: flex; }
+  .zoom-controls #zoom-val { display: none; }
+  .zoom-btn { width: 26px; height: 26px; font-size: 16px; }
+  #legend { display: none; }
+
+  aside#panel { width: 100vw; border-left: none; border-top: 2px solid var(--blue); }
+
+  #breadcrumb { bottom: 10px; font-size: 11px; padding: 5px 12px; }
+  #hint { bottom: 48px; font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+
+<body>
+
+<header id="topbar" role="banner">
+
+  <div class="logo" aria-label="UDFNEWS">
+    <span class="u">UDF</span><span class="n">NEWS</span>
+    <span class="tagline">Portal Universitário</span>
+  </div>
+
+  <nav id="main-nav" aria-label="Navegação principal">
+    <button class="tab-btn" aria-selected="true"  onclick="switchTab('map',this)"  role="tab">🌐 Mapa</button>
+    <button class="tab-btn" aria-selected="false" onclick="switchTab('feed',this)" role="tab">📰 Feed</button>
+    <button class="tab-btn admin-tab"             onclick="openAdmin()"            role="tab">⚙️ Admin</button>
+  </nav>
+
+  <div class="zoom-controls" role="group" aria-label="Controles de zoom">
+    <button class="zoom-btn" onclick="adjustZoom(-0.15)" aria-label="Reduzir zoom" title="Zoom −">−</button>
+    <span id="zoom-val" aria-live="polite" aria-atomic="true">60%</span>
+    <button class="zoom-btn" onclick="adjustZoom(0.15)"  aria-label="Aumentar zoom" title="Zoom +">+</button>
+    <button class="zoom-btn" onclick="resetView()"       aria-label="Resetar visualização" title="Reset">⌂</button>
+  </div>
+
+  <button class="zoom-btn" onclick="toggleTheme()" aria-label="Alternar modo escuro" title="Modo escuro">🌙</button>
+
+  <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" id="hamburger-btn">
+    <span></span><span></span><span></span>
+  </button>
+
+</header>
+
+<main id="canvas-wrap" aria-label="Mapa interativo de círculos de interesse">
+  <div id="canvas" role="img" aria-label="Círculos de interesse universitários"></div>
+</main>
+
+<aside id="legend" aria-label="Legenda de níveis">
+  <div class="legend-item"><span class="legend-dot" style="background:#f5c800"></span>Universidade</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#0050b3"></span>Área — Exatas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#e5006a"></span>Área — Humanas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00b341"></span>Área — Biológicas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#ff6b00"></span>Semestre</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#7b2fff"></span>Curso</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00c2e0"></span>Sala de Aula</div>
+</aside>
+
+<nav id="breadcrumb" aria-label="Localização atual">
+  <strong>UDF</strong><span class="sep">›</span>Todos os Interesses
+</nav>
+
+<p id="hint" role="status" aria-live="polite">
+  🖱️ Role para zoom · Arraste para navegar · Clique nos círculos
+</p>
+
+<aside id="panel" role="complementary" aria-label="Detalhes do grupo" aria-hidden="true">
+  <button class="panel-close" onclick="closePanel()" aria-label="Fechar painel">×</button>
+  <div id="panel-badge" class="panel-badge"></div>
+  <h2 id="panel-title"></h2>
+  <p  id="panel-desc"></p>
+  <div class="panel-divider"></div>
+  <section id="panel-news-list" aria-label="Notícias do grupo"></section>
+</aside>
+
+<div id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
+  <div class="drawer-scrim" onclick="toggleDrawer()"></div>
+  <div class="drawer-content">
+    <button class="tab-btn" onclick="switchTab('map');  toggleDrawer()">🌐 Mapa de Interesses</button>
+    <button class="tab-btn" onclick="switchTab('feed'); toggleDrawer()">📰 Feed Geral</button>
+    <button class="tab-btn admin-tab" onclick="openAdmin(); toggleDrawer()">⚙️ Painel Admin</button>
+  </div>
+</div>
+
+<section id="admin-panel" role="region" aria-label="Painel administrativo">
+
+  <header class="admin-header">
+    <div>
+      <h1 class="admin-title"><span>UDF</span>NEWS — Admin</h1>
+      <p class="admin-subtitle">Gerencie publicações e usuários delegados</p>
+    </div>
+    <button class="tab-btn" onclick="closeAdmin()">← Voltar ao Mapa</button>
+  </header>
+
+  <div class="stats-grid" role="group" aria-label="Estatísticas">
+    <div class="stat-card">
+      <p class="stat-label">Publicações</p>
+      <p class="stat-number" id="stat-news">0</p>
+      <p class="stat-sub">em todos os níveis</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Grupos</p>
+      <p class="stat-number">63</p>
+      <p class="stat-sub">geral + áreas + semestres + salas</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Representantes</p>
+      <p class="stat-number">24</p>
+      <p class="stat-sub">com acesso delegado</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Visualizações hoje</p>
+      <p class="stat-number">1.847</p>
+      <p class="stat-sub">em todas as plataformas</p>
+    </div>
+  </div>
+
+  <div class="admin-grid">
+
+    <article class="admin-card">
+      <h2 class="admin-card-title">📢 Publicar Nova Notícia</h2>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-level">Nível de Destino</label>
+        <select class="form-select" id="pub-level" onchange="updatePubTargets()">
+          <option value="geral">🌐 Geral — Toda a Universidade</option>
+          <option value="area">📚 Área de Conhecimento</option>
+          <option value="semestre">🗓 Semestre da Área</option>
+          <option value="curso">🎓 Curso</option>
+          <option value="sala">🏫 Sala de Aula</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="pub-target-group">
+        <label class="form-label" for="pub-target">Destino Específico</label>
+        <select class="form-select" id="pub-target"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-title">Título da Notícia</label>
+        <input class="form-input" id="pub-title" type="text" placeholder="Ex: Semana de Tecnologia 2025" maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-body">Conteúdo</label>
+        <textarea class="form-textarea" id="pub-body" placeholder="Descreva o evento ou informação..." maxlength="400"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-author">Autor / Publicador</label>
+        <input class="form-input" id="pub-author" type="text" placeholder="Nome ou setor" maxlength="50">
+      </div>
+
+      <button class="btn-primary" onclick="publishNews()">📤 Publicar Agora</button>
+    </article>
+
+    <article class="admin-card">
+      <h2 class="admin-card-title">📋 Publicações Recentes</h2>
+      <div class="news-table-wrap">
+        <table class="news-table" aria-label="Lista de publicações">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Nível</th>
+              <th>Destino</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="admin-news-list"></tbody>
+        </table>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<dialog id="login-modal" aria-modal="true" aria-label="Login de administrador">
+  <div class="login-box">
+    <p class="login-logo"><span class="u">UDF</span><span class="n">NEWS</span></p>
+    <p class="login-sub">Acesso Administrador / Representante</p>
+
+    <div class="form-group">
+      <label class="form-label" for="login-user">Usuário</label>
+      <input class="form-input" id="login-user" type="text" value="admin" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="login-pass">Senha</label>
+      <input class="form-input" id="login-pass" type="password" value="udf2025" autocomplete="current-password">
+    </div>
+
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <p class="login-err" id="login-err" role="alert">Usuário ou senha incorretos.</p>
+    <p class="login-hint">Demo: admin / udf2025</p>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite" aria-atomic="true">✅ Publicado com sucesso!</div>
+
+<script>
+'use strict';
+
+/* ── DATA ────────────────────────────────────────────────────────── */
+const AREAS = [
+  { id:'exatas',  name:'Ciências Exatas',    color:'#0050b3', bg:'rgba(0,80,179,0.08)',   icon:'⚡' },
+  { id:'humanas', name:'Ciências Humanas',   color:'#e5006a', bg:'rgba(229,0,106,0.08)',   icon:'📖' },
+  { id:'bio',     name:'Ciências Biológicas',color:'#00b341', bg:'rgba(0,179,65,0.08)',    icon:'🌱' },
+];
+const CURSOS = {
+  exatas:  ['Eng. Software','Matemática','Física','Ciênc. Comp.'],
+  humanas: ['Direito','Filosofia','Letras','Pedagogia'],
+  bio:     ['Biomedicina','Farmácia','Nutrição','Biologia'],
+};
+const LEVEL_META = {
+  geral:    { color:'#f5c800', label:'Geral' },
+  area:     { color:'#0050b3', label:'Área'  },
+  semestre: { color:'#ff6b00', label:'Semestre' },
+  curso:    { color:'#7b2fff', label:'Curso' },
+  sala:     { color:'#00c2e0', label:'Sala'  },
+};
+
+let NEWS = [
+  { id:1,  level:'geral',    target:'geral',                  title:'Semana da Inovação UDF 2025',             body:'Inscrições abertas para o maior evento de tecnologia e empreendedorismo da faculdade. Haverá palestras, hackathon e feira de projetos.',                  author:'Reitoria',          time:'há 2h',    color:'#f5c800' },
+  { id:2,  level:'geral',    target:'geral',                  title:'Restaurante Universitário — novos horários', body:'A partir de segunda-feira, o RU funcionará das 11h às 15h e das 18h às 21h. O cardápio vegetariano foi ampliado.',                                   author:'Administração',     time:'há 5h',    color:'#f5c800' },
+  { id:3,  level:'geral',    target:'geral',                  title:'Resultado do Processo Seletivo de Monitoria', body:'Confira no portal acadêmico os aprovados para as vagas de monitoria do 2º semestre de 2025.',                                                      author:'Pró-Reitoria',      time:'ontem',    color:'#f5c800' },
+  { id:4,  level:'area',     target:'exatas',                 title:'Olimpíada de Matemática UDF — Inscrições', body:'Etapa interna acontece em 15/08. Podem participar alunos de todos os períodos de Exatas.',                                                            author:'Coord. Exatas',     time:'há 3h',    color:'#0050b3' },
+  { id:5,  level:'area',     target:'exatas',                 title:'Lab de Robótica abre vagas para IC',       body:'Equipe de pesquisa está aceitando alunos de graduação para iniciação científica em IA e Robótica.',                                                    author:'Pesquisa UDF',      time:'há 6h',    color:'#0050b3' },
+  { id:6,  level:'area',     target:'humanas',                title:'Ciclo de Palestras: Filosofia Contemporânea', body:'Prof. Dr. Marcos Alves ministra série sobre Ética Digital. Início: quarta às 19h. Entrada gratuita.',                                              author:'Coord. Humanas',    time:'há 4h',    color:'#e5006a' },
+  { id:7,  level:'area',     target:'humanas',                title:'Simulado OAB gratuito para alunos de Direito', body:'Parceria com escritório Pinto & Alves oferece simulado presencial gratuito no sábado às 8h.',                                                    author:'Coord. Direito',    time:'há 1h',    color:'#e5006a' },
+  { id:8,  level:'area',     target:'bio',                    title:'Semana da Biologia — DNA Day 2025',        body:'Exposição interativa sobre genética, biotecnologia e medicina. Entrada gratuita para todos os alunos.',                                                author:'Coord. Bio',        time:'há 7h',    color:'#00b341' },
+  { id:9,  level:'area',     target:'bio',                    title:'Novo laboratório de microbiologia inaugurado', body:'Instalações modernas com equipamentos de última geração disponíveis para aulas práticas a partir desta semana.',                                   author:'Infraestrutura',    time:'há 2h',    color:'#00b341' },
+  { id:10, level:'semestre', target:'exatas-1',               title:'Boas-vindas calouros Exatas — 1º Sem',    body:'Recepção na quinta às 9h no auditório principal. Presença obrigatória. Traga documento com foto.',                                                      author:'Centro Acadêmico',  time:'há 1h',    color:'#ff6b00' },
+  { id:11, level:'semestre', target:'exatas-4',               title:'Estágio supervisionado — prazo final',    body:'Documentação deve ser entregue na secretaria até 30/07. Não haverá prorrogação de prazo.',                                                              author:'Coord. Exatas',     time:'há 3h',    color:'#ff6b00' },
+  { id:12, level:'semestre', target:'humanas-3',              title:'Excursão pedagógica ao STF',              body:'Visita ao Supremo Tribunal Federal em 20/08. Vagas limitadas a 30 alunos. Inscreva-se na secretaria!',                                                  author:'Rep. Turma 3H',     time:'há 2h',    color:'#ff6b00' },
+  { id:13, level:'semestre', target:'bio-5',                  title:'Aula prática no Laboratório Central',     body:'5º semestre terá aula especial no Laboratório Central com microscopia eletrônica. Uso de jaleco obrigatório.',                                          author:'Coord. Bio',        time:'há 4h',    color:'#ff6b00' },
+  { id:14, level:'curso',    target:'Eng. Software',          title:'Hackathon UDF Soft — Equipes Abertas',   body:'Hackathon de 48h com tema IA para Inclusão Social. Monte sua equipe e inscreva-se. Premiação de R$ 3.000.',                                               author:'Coord. Eng. Soft',  time:'há 30min', color:'#7b2fff' },
+  { id:15, level:'curso',    target:'Direito',                title:'Julgamento Simulado — LGPD',             body:'Alunos do 5º período participam de tribunal simulado sobre caso real de violação de dados pessoais.',                                                     author:'Prof. Carvalho',    time:'há 2h',    color:'#7b2fff' },
+  { id:16, level:'curso',    target:'Biomedicina',            title:'Projeto de Extensão: Saúde Comunitária', body:'Alunos de Biomedicina realizam coleta de exames gratuitos em comunidades vulneráveis. Cadastre-se!',                                                     author:'Coord. Extensão',   time:'há 4h',    color:'#7b2fff' },
+  { id:17, level:'curso',    target:'Matemática',             title:'Palestra: Matemática Financeira Aplicada', body:'Prof. Ana Lima apresenta aplicações de cálculo diferencial em finanças e mercado de capitais. Amanhã às 10h.',                                         author:'Prof. Ana Lima',    time:'há 1h',    color:'#7b2fff' },
+  { id:18, level:'sala',     target:'Eng. Sof T1-S3',        title:'Prova AV2 — Eng. de Requisitos amanhã', body:'Conteúdo: UML, casos de uso, histórias de usuário. Prof. Ribeiro confirmou prova para 8h. Sala 302.',                                                     author:'Rep. Turma',        time:'há 1h',    color:'#00c2e0' },
+  { id:19, level:'sala',     target:'Eng. Sof T2-S3',        title:'Material POO disponível no portal',      body:'Prof. Fernanda postou slides e exercícios resolvidos de Programação Orientada a Objetos para revisão.',                                                  author:'Rep. Turma',        time:'há 3h',    color:'#00c2e0' },
+  { id:20, level:'sala',     target:'Direito T1-S2',          title:'Aula de Processo Civil cancelada',       body:'Prof. Lima está em congresso. Reposição na próxima sexta às 18h. Avise os colegas do grupo!',                                                            author:'Rep. Turma',        time:'há 45min', color:'#00c2e0' },
+  { id:21, level:'sala',     target:'Biomedi T3-S5',          title:'Relatório de Bioquímica — entrega hoje', body:'Relatório da aula prática de metabolismo lipídico vence hoje às 23h59. Envie pelo portal acadêmico.',                                                    author:'Rep. Turma',        time:'há 20min', color:'#00c2e0' },
+];
+let nextId = 22;
+let isAdmin = false;
+
+/* ── CANVAS & TRANSFORM ─────────────────────────────────────────── */
+const wrap   = document.getElementById('canvas-wrap');
+const canvas = document.getElementById('canvas');
+let scale = 0.55, tx = -320, ty = -220;
+let dragging = false, lastX = 0, lastY = 0;
+let lastTouchDist = 0;
+
+function applyTransform() {
+  canvas.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  document.getElementById('zoom-val').textContent = Math.round(scale * 100) + '%';
+}
+
+/* Mouse drag */
+wrap.addEventListener('mousedown', e => {
+  if (e.target.closest('.circle-group')) return;
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  wrap.classList.add('grabbing');
+});
+window.addEventListener('mouseup', () => { dragging = false; wrap.classList.remove('grabbing'); });
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  tx += e.clientX - lastX; ty += e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  applyTransform();
+});
+
+/* Wheel zoom */
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const d = e.deltaY > 0 ? -0.09 : 0.09;
+  const rect = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const prev = scale;
+  scale = Math.max(0.12, Math.min(2.8, scale + d));
+  tx = mx - (mx - tx) * (scale / prev);
+  ty = my - (my - ty) * (scale / prev);
+  applyTransform();
+}, { passive: false });
+
+/* Touch pan + pinch-zoom */
+wrap.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1) {
+    dragging = true;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+wrap.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    const ratio = dist / (lastTouchDist || dist);
+    const rect = wrap.getBoundingClientRect();
+    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+    const prev = scale;
+    scale = Math.max(0.12, Math.min(2.8, scale * ratio));
+    tx = mx - (mx - tx) * (scale / prev);
+    ty = my - (my - ty) * (scale / prev);
+    lastTouchDist = dist;
+    applyTransform();
+  } else if (dragging && e.touches.length === 1) {
+    tx += e.touches[0].clientX - lastX;
+    ty += e.touches[0].clientY - lastY;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+    applyTransform();
+  }
+}, { passive: false });
+
+wrap.addEventListener('touchend', () => { dragging = false; });
+
+function adjustZoom(d) {
+  scale = Math.max(0.12, Math.min(2.8, scale + d));
+  applyTransform();
+}
+function resetView() {
+  scale = 0.55; tx = -320; ty = -220; applyTransform();
+}
+
+/* ── HELPERS ────────────────────────────────────────────────────── */
+function getNews(level, target) {
+  if (level === 'geral')    return NEWS.filter(n => n.level === 'geral');
+  if (level === 'area')     return NEWS.filter(n => n.level === 'area'     && n.target === target);
+  if (level === 'semestre') return NEWS.filter(n => n.level === 'semestre' && n.target === target);
+  if (level === 'curso')    return NEWS.filter(n => n.level === 'curso'    && n.target === target);
+  if (level === 'sala')     return NEWS.filter(n => n.level === 'sala'     && n.target === target);
+  return [];
+}
+
+function el(tag, cls, css) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (css) e.style.cssText = css;
+  return e;
+}
+
+/* ── CIRCLE BUILDER ─────────────────────────────────────────────── */
+function makeNewsChip(news, x, y, w, h) {
+  const d = el('div', 'news-chip', `left:${x}px;top:${y}px;width:${w}px;max-height:${h}px;border-left-color:${news.color}`);
+  d.innerHTML = `<div class="nc-tag" style="color:${news.color}">${LEVEL_META[news.level]?.label || news.level}</div><div class="nc-title">${news.title}</div><div class="nc-time">${news.time}</div>`;
+  return d;
+}
+
+function chipPositions(count, size, pad, cw, ch) {
+  const angles = [-110, -70, 70, 110].map(a => a * Math.PI / 180);
+  const r = size / 2 - pad - cw / 2 - 8;
+  const cx = size / 2, cy = size / 2;
+  return Array.from({ length: count }, (_, i) => ({
+    x: cx + r * Math.cos(angles[i] || 0) - cw / 2,
+    y: cy + r * Math.sin(angles[i] || 0) - ch / 2,
+  }));
+}
+
+function makeCircle(cfg) {
+  const g = el('div', 'circle-group', `left:${cfg.x}px;top:${cfg.y}px;width:${cfg.size}px;height:${cfg.size}px;`);
+  g.setAttribute('role', 'button');
+  g.setAttribute('aria-label', `${cfg.name} — clique para ver notícias`);
+  g.setAttribute('tabindex', '0');
+
+  // background
+  const bg = el('div', 'circle-bg', `width:${cfg.size}px;height:${cfg.size}px;background:${cfg.bg};border:2px solid ${cfg.color}35;`);
+  g.appendChild(bg);
+
+  // inner ring
+  const ring = el('div', '', `position:absolute;inset:5px;border-radius:50%;border:1px solid ${cfg.color}18;pointer-events:none;`);
+  g.appendChild(ring);
+
+  // chips
+  const items = getNews(cfg.level, cfg.target);
+  if (items.length && cfg.size >= 130) {
+    const cw = Math.min(cfg.size * 0.33, 108);
+    const ch = 56;
+    const pad = cfg.size * 0.11;
+    chipPositions(Math.min(items.length, 4), cfg.size, pad, cw, ch).forEach((pos, i) => {
+      g.appendChild(makeNewsChip(items[i], pos.x, pos.y, cw, ch));
+    });
+  }
+
+  // label
+  const ls  = Math.max(9, Math.min(cfg.size * 0.082, 22));
+  const lbl = el('div', 'circle-label', `left:50%;bottom:${Math.max(8, cfg.size * 0.09)}px;transform:translateX(-50%);font-size:${ls}px;color:${cfg.color};width:92%;text-align:center;`);
+  lbl.textContent = (cfg.icon ? cfg.icon + ' ' : '') + cfg.name;
+  g.appendChild(lbl);
+
+  g.addEventListener('click', e => { e.stopPropagation(); openPanel(cfg); });
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPanel(cfg); } });
+
+  return g;
+}
+
+/* ── BUILD MAP ──────────────────────────────────────────────────── */
+function buildMap() {
+  canvas.innerHTML = '';
+
+  const CX = 1800, CY = 1600;
+
+  // GERAL
+  const gS = 720;
+  canvas.appendChild(makeCircle({
+    x: CX - gS/2, y: CY - gS/2, size: gS,
+    level:'geral', target:'geral',
+    name:'UNIVERSIDADE UDF', color:'#f5c800',
+    bg:'rgba(245,200,0,0.07)', icon:'🏛️'
+  }));
+
+  // AREA offsets
+  const aPos = [
+    { dx: -900, dy: -100 },  // exatas (left)
+    { dx:    0, dy: -860 },  // humanas (top)
+    { dx:  900, dy: -100 },  // bio (right)
+  ];
+  const aS = 500;
+
+  AREAS.forEach((area, ai) => {
+    const ap = aPos[ai];
+    const ax = CX + ap.dx - aS/2;
+    const ay = CY + ap.dy - aS/2;
+
+    canvas.appendChild(makeCircle({
+      x: ax, y: ay, size: aS,
+      level:'area', target: area.id,
+      name: area.name, color: area.color,
+      bg: area.bg, icon: area.icon
+    }));
+
+    // SEMESTRES (8 ao redor da área)
+    const sS = 190, sR = 330;
+    for (let s = 1; s <= 8; s++) {
+      const ang = (s - 1) * (Math.PI * 2 / 8) - Math.PI / 2;
+      const sx = ax + aS/2 + sR * Math.cos(ang) - sS/2;
+      const sy = ay + aS/2 + sR * Math.sin(ang) - sS/2;
+
+      canvas.appendChild(makeCircle({
+        x: sx, y: sy, size: sS,
+        level:'semestre', target:`${area.id}-${s}`,
+        name:`${s}º Sem`, color:'#ff6b00',
+        bg:'rgba(255,107,0,0.13)', icon:''
+      }));
+
+      // CURSOS (4 ao redor do semestre)
+      const cS = 66, cR = 76;
+      CURSOS[area.id].forEach((curso, ci) => {
+        const cang = ci * (Math.PI / 2) + Math.PI / 4;
+        const ccx = sx + sS/2 + cR * Math.cos(cang) - cS/2;
+        const ccy = sy + sS/2 + cR * Math.sin(cang) - cS/2;
+
+        canvas.appendChild(makeCircle({
+          x: ccx, y: ccy, size: cS,
+          level:'curso', target: curso,
+          name: curso.split(' ')[0], color:'#7b2fff',
+          bg:'rgba(123,47,255,0.20)', icon:''
+        }));
+
+        // SALAS (4 ao redor do curso)
+        const rS = 30, rR = 28;
+        for (let rm = 1; rm <= 4; rm++) {
+          const rang = (rm - 1) * (Math.PI / 2);
+          const rrx = ccx + cS/2 + rR * Math.cos(rang) - rS/2;
+          const rry = ccy + cS/2 + rR * Math.sin(rang) - rS/2;
+          const salaTarget = `${curso.substring(0, 8).trim()} T${rm}-S${s}`;
+
+          canvas.appendChild(makeCircle({
+            x: rrx, y: rry, size: rS,
+            level:'sala', target: salaTarget,
+            name:`T${rm}`, color:'#00c2e0',
+            bg:'rgba(0,194,224,0.22)', icon:''
+          }));
+        }
+      });
+    }
+  });
+
+  updateStatNews();
+}
+
+/* ── PANEL ──────────────────────────────────────────────────────── */
+function openPanel(cfg) {
+  const items = getNews(cfg.level, cfg.target);
+  const lm = LEVEL_META[cfg.level] || { color: cfg.color, label: cfg.level };
+
+  const badge = document.getElementById('panel-badge');
+  badge.textContent = `${lm.label} · ${cfg.name}`;
+  badge.style.cssText = `background:${cfg.color}15;color:${cfg.color};`;
+
+  document.getElementById('panel-title').textContent = cfg.name;
+  document.getElementById('panel-desc').textContent =
+    items.length ? `${items.length} publicação(ões) neste grupo` : 'Nenhuma publicação neste grupo ainda.';
+
+  const list = document.getElementById('panel-news-list');
+  list.innerHTML = '';
+
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><p class="es-icon">📭</p><p>Sem notícias aqui ainda.</p></div>';
+  } else {
+    items.forEach(n => {
+      const d = el('article', 'panel-news-item');
+      d.style.borderLeftColor = n.color;
+      d.innerHTML = `
+        <p class="pni-tag" style="color:${n.color}">${LEVEL_META[n.level]?.label || n.level}</p>
+        <h3 class="pni-title">${n.title}</h3>
+        <p  class="pni-body">${n.body}</p>
+        <p  class="pni-meta"><span>✍️ ${n.author}</span><span>${n.time}</span></p>
+      `;
+      list.appendChild(d);
+    });
+  }
+
+  const panel = document.getElementById('panel');
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  updateBreadcrumb(cfg);
+}
+
+function closePanel() {
+  const panel = document.getElementById('panel');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  document.getElementById('breadcrumb').innerHTML = '<strong>UDF</strong><span class="sep">›</span>Todos os Interesses';
+}
+
+function updateBreadcrumb(cfg) {
+  const lm = LEVEL_META[cfg.level] || { label: cfg.level };
+  document.getElementById('breadcrumb').innerHTML =
+    `<strong>UDF</strong><span class="sep">›</span><strong>${lm.label}</strong><span class="sep">›</span>${cfg.name}`;
+}
+
+/* ── ADMIN ──────────────────────────────────────────────────────── */
+function openAdmin() {
+  if (!isAdmin) { document.getElementById('login-modal').classList.add('open'); return; }
+  document.getElementById('admin-panel').classList.add('open');
+  renderAdminNews();
+  updatePubTargets();
+}
+
+function closeAdmin() {
+  document.getElementById('admin-panel').classList.remove('open');
+  applySavedTheme();
+  buildMap();
+}
+
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if (u === 'admin' && p === 'udf2025') {
+    isAdmin = true;
+    document.getElementById('login-modal').classList.remove('open');
+    openAdmin();
+  } else {
+    err.style.display = 'block';
+  }
+}
+
+/* Enter key on login */
+['login-user','login-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
+
+function updatePubTargets() {
+  const level = document.getElementById('pub-level').value;
+  const sel   = document.getElementById('pub-target');
+  sel.innerHTML = '';
+  const map = {
+    geral:    ['geral'],
+    area:     AREAS.map(a => a.id),
+    semestre: AREAS.flatMap(a => Array.from({length:8},(_,i)=>`${a.id}-${i+1}`)),
+    curso:    Object.values(CURSOS).flat(),
+    sala:     AREAS.flatMap(a => CURSOS[a.id].flatMap(c => Array.from({length:4},(_,i)=>`${c.substring(0,8).trim()} T${i+1}-S1`))),
+  };
+  (map[level] || []).forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = opt.textContent = o;
+    sel.appendChild(opt);
+  });
+}
+
+function publishNews() {
+  const level  = document.getElementById('pub-level').value;
+  const target = document.getElementById('pub-target').value;
+  const title  = document.getElementById('pub-title').value.trim();
+  const body   = document.getElementById('pub-body').value.trim();
+  const author = document.getElementById('pub-author').value.trim() || 'Administrador';
+  if (!title || !body) { alert('Preencha o título e o conteúdo da notícia.'); return; }
+
+  const colorMap = {
+    geral:    '#f5c800',
+    area:     AREAS.find(a => a.id === target)?.color || '#0050b3',
+    semestre: '#ff6b00',
+    curso:    '#7b2fff',
+    sala:     '#00c2e0',
+  };
+
+  NEWS.unshift({ id: nextId++, level, target, title, body, author, time: 'agora', color: colorMap[level] || '#f5c800' });
+  document.getElementById('pub-title').value = '';
+  document.getElementById('pub-body').value  = '';
+
+  renderAdminNews();
+  updateStatNews();
+  showToast();
+}
+
+function deleteNews(id) {
+  NEWS = NEWS.filter(n => n.id !== id);
+  renderAdminNews();
+  updateStatNews();
+  buildMap();
+}
+
+function renderAdminNews() {
+  const tbody = document.getElementById('admin-news-list');
+  tbody.innerHTML = '';
+  NEWS.slice(0, 25).forEach(n => {
+    const lm  = LEVEL_META[n.level] || { color: n.color, label: n.level };
+    const tr  = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:700;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</td>
+      <td><span class="td-badge" style="background:${lm.color}15;color:${lm.color}">${lm.label}</span></td>
+      <td style="font-size:11px;color:var(--muted);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.target}</td>
+      <td><button class="del-btn" onclick="deleteNews(${n.id})" aria-label="Excluir publicação">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateStatNews() {
+  document.getElementById('stat-news').textContent = NEWS.length;
+}
+
+/* ── TOAST ──────────────────────────────────────────────────────── */
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ── TABS & DRAWER ──────────────────────────────────────────────── */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn:not(.admin-tab)').forEach(b => b.setAttribute('aria-selected','false'));
+  if (btn) btn.setAttribute('aria-selected','true');
+}
+
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  const d   = document.getElementById('mobile-drawer');
+  const btn = document.getElementById('hamburger-btn');
+  d.classList.toggle('open', drawerOpen);
+  d.setAttribute('aria-hidden', !drawerOpen);
+  btn.setAttribute('aria-expanded', drawerOpen);
+}
+
+/* close panel on outside click */
+document.getElementById('canvas-wrap').addEventListener('click', e => {
+  if (!e.target.closest('.circle-group')) closePanel();
+});
+
+/* ── HINT FADE ──────────────────────────────────────────────────── */
+setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 5500);
+
+
+function applySavedTheme() {
+  const saved = localStorage.getItem('udfnews-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('udfnews-theme', next);
+}
+
+/* ── INIT ───────────────────────────────────────────────────────── */
+buildMap();
+applyTransform();
+updatePubTargets();
+</script>
+</body>
+</html>
