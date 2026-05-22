@@ -48,6 +48,30 @@
   --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
+
+[data-theme="dark"] {
+  --bg:        #0f1115;
+  --surface:   #171a21;
+  --card:      #1d212b;
+  --card2:     #252b36;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.16);
+  --text:      #f3f6fb;
+  --muted:     rgba(243,246,251,0.72);
+  --faint:     rgba(243,246,251,0.45);
+}
+[data-theme="dark"] header#topbar,
+[data-theme="dark"] aside#panel,
+[data-theme="dark"] #breadcrumb,
+[data-theme="dark"] #legend,
+[data-theme="dark"] .login-box,
+[data-theme="dark"] .news-chip {
+  background: rgba(23,26,33,0.95);
+}
+[data-theme="dark"] main#canvas-wrap {
+  background: linear-gradient(135deg, #0f1115 0%, #171a21 100%);
+}
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -847,6 +871,8 @@ dialog#login-modal.open {
     <button class="zoom-btn" onclick="resetView()"       aria-label="Resetar visualização" title="Reset">⌂</button>
   </div>
 
+  <button class="zoom-btn" onclick="toggleTheme()" aria-label="Alternar modo escuro" title="Modo escuro">🌙</button>
+
   <!-- Hamburger (mobile) -->
   <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" id="hamburger-btn">
     <span></span><span></span><span></span>
@@ -1375,7 +1401,8 @@ function openAdmin() {
 }
 function closeAdmin() {
   document.getElementById('admin-panel').classList.remove('open');
-  buildMap();
+  applySavedTheme();
+buildMap();
 }
 
 function doLogin() {
@@ -1496,6 +1523,18 @@ document.getElementById('canvas-wrap').addEventListener('click', e => {
 
 /* ── HINT FADE ──────────────────────────────────────────────────── */
 setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 5500);
+
+
+function applySavedTheme() {
+  const saved = localStorage.getItem('udfnews-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('udfnews-theme', next);
+}
 
 /* ── INIT ───────────────────────────────────────────────────────── */
 buildMap();
