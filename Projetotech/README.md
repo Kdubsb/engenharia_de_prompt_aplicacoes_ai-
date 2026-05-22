@@ -64,4 +64,4 @@ João Rafael ficou encarregado de organizar a documentação e corrigir bugs.
 
 ## 🚀 Próximos Passos
 
-Integrar o sistema da UDF News ao sistema do Centro Universitário do Distrito Federal (UDF), automatizando avisos e o cadastro dos estudantes na plataforma. 
+Integrar o sistema da UDF News ao sistema do Centro Universitário do Distrito Federal (UDF), automatizando avisos e viabilizando o cadastro dos estudantes na plataforma. 
