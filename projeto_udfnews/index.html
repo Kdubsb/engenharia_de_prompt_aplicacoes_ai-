@@ -48,7 +48,6 @@
   --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
-
 [data-theme="dark"] {
   --bg:        #0f1115;
   --surface:   #171a21;
@@ -60,6 +59,7 @@
   --muted:     rgba(243,246,251,0.72);
   --faint:     rgba(243,246,251,0.45);
 }
+
 [data-theme="dark"] header#topbar,
 [data-theme="dark"] aside#panel,
 [data-theme="dark"] #breadcrumb,
@@ -68,6 +68,7 @@
 [data-theme="dark"] .news-chip {
   background: rgba(23,26,33,0.95);
 }
+
 [data-theme="dark"] main#canvas-wrap {
   background: linear-gradient(135deg, #0f1115 0%, #171a21 100%);
 }
@@ -86,49 +87,30 @@ body {
 button { cursor: pointer; font-family: inherit; }
 a { color: inherit; text-decoration: none; }
 
-:focus-visible {
-  outline: 2px solid var(--blue);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* ══════════════════════════════════════════════════════
-   SCROLLBAR
-══════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.28); }
-
 /* ══════════════════════════════════════════════════════
    TOPBAR
 ══════════════════════════════════════════════════════ */
 header#topbar {
   position: fixed;
-  inset-block-start: 0;
-  inset-inline: 0;
+  top: 0; left: 0; right: 0;
   z-index: 200;
   height: var(--topbar-h);
   background: rgba(255,255,255,0.97);
   border-bottom: 2px solid var(--blue);
   backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline: clamp(12px, 3vw, 24px);
+  padding-inline: 24px;
   gap: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-/* Logo */
 .logo {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(22px, 4vw, 30px);
+  font-size: 26px;
   letter-spacing: 2px;
   line-height: 1;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 .logo .u { color: var(--blue); }
 .logo .n { color: var(--red); }
@@ -140,960 +122,421 @@ header#topbar {
   text-transform: uppercase;
   color: var(--muted);
   display: block;
-  margin-top: -2px;
 }
 
-/* Nav */
-nav#main-nav {
-  display: flex;
-  gap: 4px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-nav#main-nav::-webkit-scrollbar { display: none; }
+nav#main-nav { display: flex; gap: 6px; }
 
 .tab-btn {
   background: transparent;
   border: 1px solid var(--border2);
   color: var(--muted);
-  padding: 5px 14px;
+  padding: 6px 14px;
   border-radius: var(--radius-pill);
-  font-size: clamp(10px, 1.5vw, 12px);
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  transition: all var(--transition);
 }
-.tab-btn:hover,
-.tab-btn[aria-selected="true"] {
+.tab-btn:hover, .tab-btn.active {
   background: var(--blue);
   color: #fff;
   border-color: var(--blue);
 }
 .tab-btn.admin-tab { border-color: rgba(229,26,26,0.5); color: var(--red); }
-.tab-btn.admin-tab:hover,
-.tab-btn.admin-tab[aria-selected="true"] {
+.tab-btn.admin-tab:hover, .tab-btn.admin-tab.active {
   background: var(--red);
   color: #fff;
   border-color: var(--red);
 }
 
-/* Zoom controls */
-.zoom-controls {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-}
+.zoom-controls { display: flex; align-items: center; gap: 5px; }
 .zoom-btn {
-  width: 30px; height: 30px;
+  width: 32px; height: 32px;
   background: var(--surface);
   border: 1px solid var(--border2);
   color: var(--text);
   border-radius: var(--radius-sm);
-  font-size: 18px;
+  font-size: 16px;
   display: flex; align-items: center; justify-content: center;
-  transition: background var(--transition);
-  line-height: 1;
 }
-.zoom-btn:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
-#zoom-val {
-  min-width: 40px;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--muted);
-}
-
-/* Hamburger (mobile) */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  background: transparent;
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-sm);
-  padding: 7px 8px;
-  cursor: pointer;
-}
-.hamburger span {
-  display: block;
-  width: 18px; height: 2px;
-  background: var(--text);
-  border-radius: 2px;
-  transition: transform 0.2s, opacity 0.2s;
-}
+.zoom-btn:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+#zoom-val { min-width: 45px; text-align: center; font-size: 12px; font-weight: 800; }
 
 /* ══════════════════════════════════════════════════════
-   CANVAS WRAPPER
+   CANVAS WRAPPER & ELEMENTOS MAPA
 ══════════════════════════════════════════════════════ */
 main#canvas-wrap {
   position: fixed;
-  inset-block-start: var(--topbar-h);
-  inset: var(--topbar-h) 0 0 0;
+  top: var(--topbar-h); bottom: 24px; left: 0; right: 0;
   overflow: hidden;
   cursor: grab;
-  touch-action: none;
+  user-select: none;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
 }
-main#canvas-wrap.grabbing { cursor: grabbing; }
+main#canvas-wrap:active { cursor: grabbing; }
 
 #canvas {
   position: absolute;
-  width: 3600px;
+  width: 3200px;
   height: 3200px;
-  transform-origin: 0 0;
-  will-change: transform;
+  transform-origin: center center;
 }
 
-/* ══════════════════════════════════════════════════════
-   CIRCLES
-══════════════════════════════════════════════════════ */
-.circle-group {
-  position: absolute;
-  cursor: pointer;
-}
-.circle-bg {
+/* Círculos customizados para visualização */
+.map-circle {
   position: absolute;
   border-radius: 50%;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,80,179,0.12);
-}
-.circle-group:hover .circle-bg {
-  transform: scale(1.035);
-  box-shadow: 0 4px 12px rgba(0,80,179,0.20);
-}
-.circle-label {
-  position: absolute;
-  text-align: center;
-  font-family: 'Oswald', sans-serif;
-  font-weight: 700;
-  pointer-events: none;
-  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
-  line-height: 1.2;
-  color: #1a1a1a;
-}
-.news-chip {
-  position: absolute;
-  background: rgba(255,255,255,0.95);
-  border-radius: 7px;
-  padding: 5px 7px;
-  font-size: 9px;
-  line-height: 1.3;
-  color: #1a1a1a;
-  pointer-events: none;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.10);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  backdrop-filter: blur(4px);
-}
-.news-chip .nc-tag {
-  font-size: 7px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  opacity: 0.75;
-  margin-bottom: 2px;
-}
-.news-chip .nc-title {
-  font-weight: 700;
-  line-height: 1.25;
-  color: #1a1a1a;
-}
-.news-chip .nc-time {
-  font-size: 7px;
-  opacity: 0.55;
-  margin-top: 2px;
-  color: var(--muted);
-}
-
-/* ══════════════════════════════════════════════════════
-   BREADCRUMB + HINT
-══════════════════════════════════════════════════════ */
-#breadcrumb {
-  position: fixed;
-  bottom: 40px; /* Ajustado para dar espaço ao footer */
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-pill);
-  padding: 6px 18px;
-  font-size: 12px;
-  color: var(--muted);
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
   justify-content: center;
-  backdrop-filter: blur(14px);
-  z-index: 90;
-  pointer-events: none;
-  max-width: 90vw;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  color: #1a1a1a;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
 }
-#breadcrumb strong { color: var(--text); }
-#breadcrumb .sep { color: var(--faint); }
+.map-circle:hover { transform: scale(1.05); }
 
+/* Elements Posicionados */
+#legend {
+  position: fixed; top: 70px; left: 12px; z-index: 80;
+  background: rgba(255,255,255,0.92); border: 1px solid var(--border2);
+  border-radius: var(--radius-md); padding: 10px; font-size: 11px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.legend-item { display: flex; align-items: center; gap: 7px; font-weight: 700; color: var(--muted); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+#breadcrumb {
+  position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+  background: rgba(255,255,255,0.92); border: 1px solid var(--border2);
+  border-radius: var(--radius-pill); padding: 6px 18px; font-size: 12px; z-index: 90;
+}
 #hint {
-  position: fixed;
-  bottom: 80px; /* Ajustado para dar espaço ao novo fluxo */
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,80,179,0.08);
-  border: 1px solid rgba(0,80,179,0.18);
-  border-radius: var(--radius-md);
-  padding: 5px 16px;
-  font-size: 11px;
-  color: var(--blue);
-  z-index: 90;
-  pointer-events: none;
-  transition: opacity 0.8s ease;
-  white-space: nowrap;
-  font-weight: 600;
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,80,179,0.08); border: 1px solid rgba(0,80,179,0.18);
+  border-radius: var(--radius-md); padding: 5px 16px; font-size: 11px; color: var(--blue); font-weight: 600;
 }
 
 /* ══════════════════════════════════════════════════════
-   SIDE PANEL
+   PAINEIS & MODAIS
 ══════════════════════════════════════════════════════ */
 aside#panel {
-  position: fixed;
-  inset-block: var(--topbar-h) 0;
-  inset-inline-end: 0;
-  width: min(360px, 100vw);
-  background: rgba(255,255,255,0.98);
-  border-left: 1px solid var(--border2);
-  z-index: 150;
-  transform: translateX(100%);
-  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: 22px 18px 30px;
-  backdrop-filter: blur(20px);
-  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+  position: fixed; top: var(--topbar-h); bottom: 24px; right: 0;
+  width: 350px; background: rgba(255,255,255,0.98);
+  border-left: 1px solid var(--border2); z-index: 150;
+  transform: translateX(100%); transition: transform var(--transition);
+  padding: 20px; overflow-y: auto;
 }
 aside#panel.open { transform: translateX(0); }
+.panel-close { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 20px; color: var(--muted); }
 
-.panel-close {
-  position: absolute;
-  top: 14px; right: 14px;
-  background: transparent;
-  border: 1px solid var(--border2);
-  color: var(--muted);
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  font-size: 16px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background var(--transition), color var(--transition);
-}
-.panel-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
-
-.panel-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 11px;
-  border-radius: var(--radius-pill);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  background: rgba(0,80,179,0.08);
-  color: var(--blue);
-}
-
-#panel-title {
-  font-family: 'Oswald', sans-serif;
-  font-size: clamp(18px,3vw,24px);
-  line-height: 1.2;
-  margin-bottom: 6px;
-  color: var(--text);
-}
-#panel-desc {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 18px;
-  line-height: 1.5;
-}
-
-.panel-divider {
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 16px;
-}
-
-.panel-news-item {
-  background: var(--card);
-  border-radius: var(--radius-md);
-  padding: 13px 14px;
-  margin-bottom: 10px;
-  border-left: 3px solid var(--blue);
-  transition: background var(--transition), transform 0.15s;
-}
-.panel-news-item:hover {
-  background: var(--card2);
-  transform: translateX(2px);
-}
-.pni-tag {
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 4px;
-}
-.pni-title {
-  font-size: 13px;
-  font-weight: 800;
-  line-height: 1.3;
-  margin-bottom: 4px;
-  color: var(--text);
-}
-.pni-body {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.45;
-}
-.pni-meta {
-  font-size: 10px;
-  color: var(--faint);
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  color: var(--faint);
-  font-size: 13px;
-}
-.empty-state .es-icon { font-size: 32px; margin-bottom: 10px; }
-
-/* ══════════════════════════════════════════════════════
-   MOBILE DRAWER (nav)
-══════════════════════════════════════════════════════ */
-#mobile-drawer {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  pointer-events: none;
-}
-#mobile-drawer.open { pointer-events: all; }
-.drawer-scrim {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,0.4);
-  opacity: 0;
-  transition: opacity 0.3s;
-  backdrop-filter: blur(4px);
-}
-#mobile-drawer.open .drawer-scrim { opacity: 1; }
-.drawer-content {
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: 260px;
-  background: var(--surface);
-  border-left: 1px solid var(--border2);
-  transform: translateX(100%);
-  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
-  padding: 70px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  box-shadow: -2px 0 8px rgba(0,0,0,0.06);
-}
-#mobile-drawer.open .drawer-content { transform: translateX(0); }
-.drawer-content .tab-btn {
-  display: block;
-  text-align: left;
-  border-radius: var(--radius-md);
-  padding: 10px 16px;
-  font-size: 14px;
-}
-
-/* ══════════════════════════════════════════════════════
-   ADMIN PANEL
-══════════════════════════════════════════════════════ */
 section#admin-panel {
-  position: fixed;
-  inset: var(--topbar-h) 0 0 0;
-  background: var(--bg);
-  z-index: 190;
-  display: none;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding: clamp(16px, 3vw, 28px);
+  position: fixed; inset: var(--topbar-h) 0 24px 0;
+  background: var(--bg); z-index: 190; display: none; padding: 24px; overflow-y: auto;
 }
 section#admin-panel.open { display: block; }
 
-.admin-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-.admin-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(24px, 4vw, 34px);
-  letter-spacing: 2px;
-  line-height: 1;
-  color: var(--text);
-}
-.admin-title span { color: var(--red); }
-.admin-subtitle {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 4px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.stat-card {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  padding: 16px 18px;
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.stat-label {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-.stat-number {
-  font-size: 30px;
-  font-weight: 900;
-  line-height: 1;
-  color: var(--blue);
-}
-.stat-sub {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 4px;
-}
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-.admin-card {
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  padding: clamp(16px, 2.5vw, 22px);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.admin-card-title {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-/* Form elements */
-.form-group { margin-bottom: 13px; }
-.form-label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-.form-input,
-.form-select,
-.form-textarea {
-  width: 100%;
-  background: rgba(255,255,255,0.7);
-  border: 1px solid var(--border2);
-  color: var(--text);
-  border-radius: var(--radius-sm);
-  padding: 9px 12px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  transition: border-color var(--transition), box-shadow var(--transition);
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-}
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0,80,179,0.12);
-}
-.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
-.form-select option { background: #ffffff; color: var(--text); }
-.form-textarea { resize: vertical; min-height: 82px; line-height: 1.5; }
-
-.btn-primary {
-  background: var(--blue);
-  border: none;
-  color: #fff;
-  padding: 11px 22px;
-  border-radius: var(--radius-md);
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  transition: background var(--transition), transform 0.15s;
-  width: 100%;
-}
-.btn-primary:hover { background: var(--blue-dk); }
-.btn-primary:active { transform: scale(0.98); }
-
-/* News table */
-.news-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-table.news-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12px;
-  min-width: 380px;
-}
-.news-table th {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--muted);
-  text-align: left;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-}
-.news-table td {
-  padding: 8px;
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-  vertical-align: top;
-}
-.td-badge {
-  display: inline-block;
-  padding: 2px 9px;
-  border-radius: var(--radius-pill);
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
-}
-.del-btn {
-  background: transparent;
-  border: 1px solid rgba(229,26,26,0.4);
-  color: var(--red);
-  border-radius: 6px;
-  padding: 3px 9px;
-  font-size: 10px;
-  font-weight: 700;
-  font-family: inherit;
-  transition: background var(--transition), color var(--transition);
-}
-.del-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
-
-/* ══════════════════════════════════════════════════════
-   LOGIN MODAL
-══════════════════════════════════════════════════════ */
 dialog#login-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(0,0,0,0.50);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(10px);
-  border: none;
-  padding: 0;
-  max-width: none;
-  max-height: none;
-  width: 100%;
-  height: 100%;
+  position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.5);
+  border: none; width: 100%; height: 100%; display: none; align-items: center; justify-content: center;
 }
-dialog#login-modal.open {
-  display: flex;
-}
-.login-box {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-xl);
-  padding: clamp(24px, 5vw, 36px);
-  width: min(340px, 90vw);
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-}
-.login-logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 40px;
-  letter-spacing: 3px;
-  line-height: 1;
-  margin-bottom: 4px;
-  color: var(--text);
-}
-.login-logo .u { color: var(--blue); }
-.login-logo .n { color: var(--red); }
-.login-sub {
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 24px;
-}
-.login-err {
-  color: var(--red);
-  font-size: 12px;
-  margin-top: 10px;
-  display: none;
-}
-.login-hint {
-  margin-top: 14px;
-  font-size: 10px;
-  color: var(--faint);
-}
+dialog#login-modal.open { display: flex; }
+.login-box { background: var(--surface); padding: 30px; border-radius: var(--radius-xl); width: 320px; text-align: center; }
+
+/* Form Básico */
+.form-group { margin-bottom: 12px; text-align: left; }
+.form-label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
+.form-input, .form-textarea { width: 100%; padding: 8px; border: 1px solid var(--border2); border-radius: var(--radius-sm); }
+.btn-primary { background: var(--blue); color: #fff; border: none; padding: 10px; width: 100%; border-radius: var(--radius-md); font-weight: 700; margin-top: 10px; }
+
+/* Feed Geral Container */
+#feed-container { display: none; padding: 30px; max-width: 800px; margin: 0 auto; overflow-y: auto; height: 100%; }
+.feed-card { background: var(--card); border: 1px solid var(--border2); padding: 16px; border-radius: var(--radius-md); margin-bottom: 12px; }
 
 /* ══════════════════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════════════════ */
-#toast {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  z-index: 999;
-  background: var(--green);
-  color: #fff;
-  padding: 11px 20px;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 700;
-  transform: translateY(70px);
-  opacity: 0;
-  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
-  pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0,179,65,0.25);
-}
-#toast.show { transform: translateY(0); opacity: 1; }
-
-/* ══════════════════════════════════════════════════════
-   LEVEL LEGEND
-══════════════════════════════════════════════════════ */
-#legend {
-  position: fixed;
-  top: calc(var(--topbar-h) + 12px);
-  left: 12px;
-  z-index: 80;
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  backdrop-filter: blur(12px);
-  font-size: 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  color: var(--muted);
-  font-weight: 700;
-}
-.legend-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-}
-
-/* ══════════════════════════════════════════════════════
-   PROMPT EXECUTADO: SITE FOOTER (Adicionado)
+   FOOTER ISOLADO (Não interfere no Zoom)
 ══════════════════════════════════════════════════════ */
 footer#site-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.95);
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 24px; background: rgba(255, 255, 255, 0.96);
   border-top: 1px solid var(--border2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--muted);
-  z-index: 210;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 -1px 6px rgba(0,0,0,0.03);
-  letter-spacing: 0.2px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  z-index: 9999; pointer-events: none; /* Cliques passam direto por ele */
 }
 [data-theme="dark"] footer#site-footer {
-  background: rgba(23, 26, 33, 0.96);
-  color: var(--muted);
+  background: rgba(23, 26, 33, 0.97);
+  color: rgba(243,246,251,0.72);
 }
 
-/* ══════════════════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
-  nav#main-nav { display: none; }
-  .hamburger { display: flex; }
-  .zoom-controls #zoom-val { display: none; }
-  .zoom-btn { width: 26px; height: 26px; font-size: 16px; }
-  #legend { display: none; }
-
-  aside#panel { width: 100vw; border-left: none; border-top: 2px solid var(--blue); }
-
-  #breadcrumb { bottom: 34px; font-size: 11px; padding: 5px 12px; }
-  #hint { bottom: 70px; font-size: 10px; }
-  
-  footer#site-footer {
-    font-size: 9.5px;
-    padding-inline: 10px;
-    text-align: center;
-  }
-}
-
-@media (max-width: 420px) {
-  .admin-grid { grid-template-columns: 1fr; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; }
+  footer#site-footer { font-size: 9px; padding-inline: 10px; text-align: center; }
+  #breadcrumb { bottom: 32px; }
+  #hint { bottom: 70px; }
 }
 </style>
 </head>
-
 <body>
 
-<header id="topbar" role="banner">
-
-  <div class="logo" aria-label="UDFNEWS">
+<header id="topbar">
+  <div class="logo">
     <span class="u">UDF</span><span class="n">NEWS</span>
     <span class="tagline">Portal Universitário</span>
   </div>
 
-  <nav id="main-nav" aria-label="Navegação principal">
-    <button class="tab-btn" aria-selected="true"  onclick="switchTab('map',this)"  role="tab">🌐 Mapa</button>
-    <button class="tab-btn" aria-selected="false" onclick="switchTab('feed',this)" role="tab">📰 Feed</button>
-    <button class="tab-btn admin-tab"              onclick="openAdmin()"            role="tab">⚙️ Admin</button>
+  <nav id="main-nav">
+    <button class="tab-btn active" onclick="switchTab('map')">🌐 Mapa</button>
+    <button class="tab-btn" onclick="switchTab('feed')">📰 Feed</button>
+    <button class="tab-btn admin-tab" onclick="openAdmin()">⚙️ Admin</button>
   </nav>
 
-  <div class="zoom-controls" role="group" aria-label="Controles de zoom">
-    <button class="zoom-btn" onclick="adjustZoom(-0.15)" aria-label="Reduzir zoom" title="Zoom −">−</button>
-    <span id="zoom-val" aria-live="polite" aria-atomic="true">60%</span>
-    <button class="zoom-btn" onclick="adjustZoom(0.15)"  aria-label="Aumentar zoom" title="Zoom +">+</button>
-    <button class="zoom-btn" onclick="resetView()"       aria-label="Resetar visualização" title="Reset">⌂</button>
+  <div class="zoom-controls">
+    <button class="zoom-btn" onclick="adjustZoom(-0.1)">−</button>
+    <span id="zoom-val">100%</span>
+    <button class="zoom-btn" onclick="adjustZoom(0.1)">+</button>
+    <button class="zoom-btn" onclick="resetView()">⌂</button>
   </div>
 
-  <button class="zoom-btn" onclick="toggleTheme()" aria-label="Alternar modo escuro" title="Modo escuro">🌙</button>
-
-  <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" id="hamburger-btn">
-    <span></span><span></span><span></span>
-  </button>
-
+  <button class="zoom-btn" onclick="toggleTheme()">🌙</button>
 </header>
 
-<main id="canvas-wrap" aria-label="Mapa interativo de círculos de interesse">
-  <div id="canvas" role="img" aria-label="Círculos de interesse universitários"></div>
+<main id="canvas-wrap" id="map-view">
+  <div id="canvas">
+    </div>
 </main>
 
-<aside id="legend" aria-label="Legenda de níveis">
-  <div class="legend-item"><span class="legend-dot" style="background:#f5c800"></span>Universidade</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#0050b3"></span>Área — Exatas</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#e5006a"></span>Área — Humanas</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#00b341"></span>Área — Biológicas</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#ff6b00"></span>Semestre</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#7b2fff"></span>Curso</div>
-  <div class="legend-item"><span class="legend-dot" style="background:#00c2e0"></span>Sala de Aula</div>
-</aside>
-
-<nav id="breadcrumb" aria-label="Localização atual">
-  <strong>UDF</strong><span class="sep">›</span>Todos os Interesses
-</nav>
-
-<p id="hint" role="status" aria-live="polite">
-  🖱️ Role para zoom · Arraste para navegar · Clique nos círculos
-</p>
-
-<aside id="panel" role="complementary" aria-label="Detalhes do grupo" aria-hidden="true">
-  <button class="panel-close" onclick="closePanel()" aria-label="Fechar painel">×</button>
-  <div id="panel-badge" class="panel-badge"></div>
-  <h2 id="panel-title"></h2>
-  <p  id="panel-desc"></p>
-  <div class="panel-divider"></div>
-  <section id="panel-news-list" aria-label="Notícias do grupo"></section>
-</aside>
-
-<div id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
-  <div class="drawer-scrim" onclick="toggleDrawer()"></div>
-  <div class="drawer-content">
-    <button class="tab-btn" onclick="switchTab('map');  toggleDrawer()">🌐 Mapa de Interesses</button>
-    <button class="tab-btn" onclick="switchTab('feed'); toggleDrawer()">📰 Feed Geral</button>
-    <button class="tab-btn admin-tab" onclick="openAdmin(); toggleDrawer()">⚙️ Painel Admin</button>
-  </div>
+<div id="feed-container">
+  <h2>📰 Feed de Notícias Gerais</h2>
+  <br>
+  <div id="feed-list"></div>
 </div>
 
-<section id="admin-panel" role="region" aria-label="Painel administrativo">
+<aside id="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:#f5c800"></span>Universidade</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#0050b3"></span>Exatas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#e5006a"></span>Humanas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00b341"></span>Biológicas</div>
+</aside>
 
-  <header class="admin-header">
-    <div>
-      <h1 class="admin-title"><span>UDF</span>NEWS — Admin</h1>
-      <p class="admin-subtitle">Gerencie publicações e usuários delegados</p>
-    </div>
-    <button class="tab-btn" onclick="closeAdmin()">← Voltar ao Mapa</button>
-  </header>
+<nav id="breadcrumb"><strong>UDF</strong><span class="sep"> › </span>Todos os Interesses</nav>
+<p id="hint">🖱️ Arraste para navegar · Use os botões de + e - para o Zoom</p>
 
-  <div class="stats-grid" role="group" aria-label="Estatísticas">
-    <div class="stat-card">
-      <p class="stat-label">Publicações</p>
-      <p class="stat-number" id="stat-news">0</p>
-      <p class="stat-sub">em todos os níveis</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Grupos</p>
-      <p class="stat-number">63</p>
-      <p class="stat-sub">geral + áreas + semestres + salas</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Representantes</p>
-      <p class="stat-number">24</p>
-      <p class="stat-sub">com acesso delegado</p>
-    </div>
-    <div class="stat-card">
-      <p class="stat-label">Visualizações hoje</p>
-      <p class="stat-number">1.847</p>
-      <p class="stat-sub">em todas as plataformas</p>
-    </div>
+<aside id="panel">
+  <button class="panel-close" onclick="closePanel()">×</button>
+  <h2 id="panel-title">Grupo Selecionado</h2>
+  <br>
+  <p id="panel-desc">Selecione um círculo para ver os detalhes da área e avisos específicos.</p>
+</aside>
+
+<section id="admin-panel">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2>⚙️ Painel de Controle Administrativo</h2>
+    <button class="tab-btn" onclick="closeAdmin()">← Voltar</button>
   </div>
-
-  <div class="admin-grid">
-
-    <article class="admin-card">
-      <h2 class="admin-card-title">📢 Publicar Nova Notícia</h2>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-level">Nível de Destino</label>
-        <select class="form-select" id="pub-level" onchange="updatePubTargets()">
-          <option value="geral">🌐 Geral — Toda a Universidade</option>
-          <option value="area">📚 Área de Conhecimento</option>
-          <option value="semestre">🗓 Semestre da Área</option>
-          <option value="curso">🎓 Curso</option>
-          <option value="sala">🏫 Sala de Aula</option>
-        </select>
-      </div>
-
-      <div class="form-group" id="pub-target-group">
-        <label class="form-label" for="pub-target">Destino Específico</label>
-        <select class="form-select" id="pub-target"></select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-title">Título da Notícia</label>
-        <input class="form-input" id="pub-title" type="text" placeholder="Ex: Semana de Tecnologia 2025" maxlength="80">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-body">Conteúdo</label>
-        <textarea class="form-textarea" id="pub-body" placeholder="Descreva o evento ou informação..." maxlength="400"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="pub-author">Autor / Publicador</label>
-        <input class="form-input" id="pub-author" type="text" placeholder="Nome ou setor" maxlength="50">
-      </div>
-
-      <button class="btn-primary" onclick="publishNews()">📤 Publicar Agora</button>
-    </article>
-
-    <article class="admin-card">
-      <h2 class="admin-card-title">📋 Publicações Recentes</h2>
-      <div class="news-table-wrap">
-        <table class="news-table" aria-label="Lista de publicações">
-          <thead>
-            <tr>
-              <th>Título</th>
-              <th>Nível</th>
-              <th>Destino</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="admin-news-list"></tbody>
-        </table>
-      </div>
-    </article>
-
+  <br>
+  <div class="form-group">
+    <label class="form-label">Título do Comunicado</label>
+    <input type="text" class="form-input" placeholder="Digite o assunto...">
+    <label class="form-label" style="margin-top:10px;">Conteúdo</label>
+    <textarea class="form-textarea" placeholder="Escreva o comunicado aqui..."></textarea>
+    <button class="btn-primary" onclick="alert('Publicado com sucesso!')">Enviar Notificação</button>
   </div>
 </section>
 
-<dialog id="login-modal" aria-modal="true" aria-label="Login de administrador">
+<dialog id="login-modal">
   <div class="login-box">
-    <p class="login-logo"><span class="u">UDF</span><span class="n">NEWS</span></p>
-    <p class="login-sub">Acesso Administrador / Representante</p>
-
+    <h3>Chave de Acesso</h3>
+    <br>
     <div class="form-group">
-      <label class="form-label" for="login-user">Usuário</label>
-      <input class="form-input" id="login-user" type="text" value="admin" autocomplete="username">
+      <label class="form-label">Usuário</label>
+      <input type="text" class="form-input" value="admin">
+      <label class="form-label" style="margin-top:10px;">Senha</label>
+      <input type="password" class="form-input" value="udf2025">
     </div>
-    <div class="form-group">
-      <label class="form-label" for="login-pass">Senha</label>
-      <input class="form-input" id="login-pass" type="password" value="udf2025" autocomplete="current-password">
-    </div>
-
-    <button class="btn-primary" onclick="doLogin()">Entrar</button>
-    <p class="login-err" id="login-err" role="alert">Usuário ou senha incorretos.</p>
-    <p class="login-hint">Demo: admin / udf2025</p>
+    <button class="btn-primary" onclick="confirmLogin()">Entrar</button>
+    <button class="btn-primary" style="background:#666;" onclick="closeLogin()">Cancelar</button>
   </div>
 </dialog>
-
-<div id="toast" role="status" aria-live="polite" aria-atomic="true">✅ Publicado com sucesso!</div>
 
 <footer id="site-footer">
   Desenvolvido por: Carlos Eduardo Andrade do Nascimento e João Rafael do Carmo Santos
 </footer>
 
 <script>
-'use strict';
+// Sistema de Estado da Aplicação
+let zoomScale = 1.0;
+let posX = 0;
+let posY = 0;
+let isDragging = false;
+let startX, startY;
 
-/* ── DATA ────────────────────────────────────────────────────────── */
-const AREAS = [
-  { id:'exatas',  name:'Ciências Exatas',   color:'#0050b3', bg:'rgba(0,80,179,0.08)',   icon:'⚡' },
-  { id:'humanas', name:'Ciências Humanas',   color:'#e5006a', bg:'rgba(229,0,106,0.08)',   icon:'📖' },
-  { id:'bio',     name:'Ciências Biológicas',color:'#00b341', bg:'rgba(0,179,65,0.08)',    icon:'🌱' },
-];
-const CURSOS = {
-  exatas:  ['Eng. Software','Matemática','Física','Ciênc. Comp.'],
-  humanas: ['Direito','Filosofia','Letras','Pedagogia'],
-  bio:     ['Biomedicina','Farmácia','Nutrição','Biologia'],
-};
-const LEVEL_META = {
-  geral:    { color:'#f5c800', label:'Geral' },
-  area:     { color:'#0050b3', label:'Área'  },
-  semestre: { color:'#ff6b00', label:'Semestre' },
-  curso:    { color:'#7b2fff', label:'Curso' },
-  sala:     { color:'#00c2e0', label:'Sala'  },
-};
+const canvasWrap = document.getElementById('canvas-wrap');
+const canvas = document.getElementById('canvas');
 
-let NEWS = [
-  { id:1,  level:'geral',    target:'geral',                  title:'Semana da Inovação UDF 2025',             body:'Inscrições abertas para o maior evento de tecnologia e empreendedorismo da faculdade. Haverá palestras, hackathon e feira de projetos.',                  author:'Reitoria',          time:'há 2h',    color:'#f5c800' },
-  { id:2,  level:'geral',    target:'geral',                  title:'Restaurante Universitário — novos horários', body:'A Basket de segunda-feira, o RU funcionará das 11h às 15h e das 18h às 21h. O cardápio vegetariano foi ampliado.',                                   author:'Administração',     time:'há 5h',    color:'#f5c800' },
+// Inicialização de Elementos no Canvas (Simulação da árvore de círculos)
+const circulosMock = [
+  { text: "UDF Geral", size: 180, x: 400, y: 300, color: "#f5c800", desc: "Portal Central com avisos da Reitoria e Secretaria Geral." },
+  { text: "Exatas", size: 140, x: 200, y: 150, color: "#0050b3", desc: "Avisos de Engenharia, TI, Matemática e Infraestrutura técnica." },
+  { text: "Humanas", size: 140, x: 650, y: 200, color: "#e5006a", desc: "Notícias de Direito, Pedagogia, Psicologia e eventos culturais." },
+  { text: "Biológicas", size: 140, x: 450, y: 550, color: "#00b341", desc: "Informações sobre Biomedicina, Enfermagem e laboratórios." }
 ];
+
+function renderizarMapa() {
+  canvas.innerHTML = '';
+  circulosMock.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'map-circle';
+    el.style.width = c.size + 'px';
+    el.style.height = c.size + 'px';
+    el.style.left = c.x + 'px';
+    el.style.top = c.y + 'px';
+    el.style.backgroundColor = c.color;
+    el.innerText = c.text;
+    el.onclick = (e) => {
+      e.stopPropagation();
+      openPanel(c.text, c.desc);
+    };
+    canvas.appendChild(el);
+  });
+}
+
+// ── CONTROLE DE ZOOM (Corrigido e Fluído) ─────────────────
+function adjustZoom(amount) {
+  zoomScale += amount;
+  if (zoomScale < 0.4) zoomScale = 0.4; // Limite Mínimo
+  if (zoomScale > 2.5) zoomScale = 2.5; // Limite Máximo
+  updateTransform();
+}
+
+function resetView() {
+  zoomScale = 1.0;
+  posX = 0;
+  posY = 0;
+  updateTransform();
+}
+
+function updateTransform() {
+  canvas.style.transform = `translate(${posX}px, ${posY}px) scale(${zoomScale})`;
+  document.getElementById('zoom-val').innerText = Math.round(zoomScale * 100) + '%';
+}
+
+// ── SISTEMA PAN (Arrastar o mapa com o Mouse) ─────────────
+canvasWrap.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startX = e.clientX - posX;
+  startY = e.clientY - posY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (!isDragging) return;
+  posX = e.clientX - startX;
+  posY = e.clientY - startY;
+  updateTransform();
+});
+
+window.addEventListener('mouseup', () => {
+  isDragging = false;
+});
+
+// Suporte para Zoom na roda do Mouse (Scroll Wheel)
+canvasWrap.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  if (e.deltaY < 0) {
+    adjustZoom(0.05);
+  } else {
+    adjustZoom(-0.05);
+  }
+}, { passive: false });
+
+// ── NAVEGAÇÃO ENTRE ABAS ──────────────────────────────────
+function switchTab(tab) {
+  const mapWrap = document.getElementById('canvas-wrap');
+  const feedCont = document.getElementById('feed-container');
+  const legend = document.getElementById('legend');
+  const breadcrumb = document.getElementById('breadcrumb');
+  const hint = document.getElementById('hint');
+  
+  // Reset active classes nas tabs
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+  if (tab === 'map') {
+    mapWrap.style.display = 'block';
+    legend.style.display = 'flex';
+    breadcrumb.style.display = 'block';
+    hint.style.display = 'block';
+    feedCont.style.display = 'none';
+    event.currentTarget.classList.add('active');
+  } else if (tab === 'feed') {
+    mapWrap.style.display = 'none';
+    legend.style.display = 'none';
+    breadcrumb.style.display = 'none';
+    hint.style.display = 'none';
+    feedCont.style.display = 'block';
+    event.currentTarget.classList.add('active');
+    carregarFeed();
+  }
+}
+
+// SIMULAÇÃO DO FEED
+function carregarFeed() {
+  const list = document.getElementById('feed-list');
+  list.innerHTML = '';
+  circulosMock.forEach(item => {
+    list.innerHTML += `
+      <div class="feed-card">
+        <h3>${item.text}</h3>
+        <p>${item.desc}</p>
+        <small style="color:var(--muted)">Publicado recentemente</small>
+      </div>
+    `;
+  });
+}
+
+// ── GERENCIAMENTO DE MODAIS E PAINÉIS ─────────────────────
+function openPanel(title, desc) {
+  const panel = document.getElementById('panel');
+  document.getElementById('panel-title').innerText = title;
+  document.getElementById('panel-desc').innerText = desc;
+  panel.classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+}
+
+function openAdmin() {
+  document.getElementById('login-modal').classList.add('open');
+}
+
+function closeLogin() {
+  document.getElementById('login-modal').classList.remove('open');
+}
+
+function confirmLogin() {
+  closeLogin();
+  document.getElementById('admin-panel').classList.add('open');
+}
+
+function closeAdmin() {
+  document.getElementById('admin-panel').classList.remove('open');
+}
+
+// Alternar Tema Escuro
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  if (currentTheme === 'dark') {
+    document.documentElement.removeAttribute('data-theme');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+}
+
+// Inicializar aplicação
+window.onload = () => {
+  renderizarMapa();
+  resetView();
+};
 </script>
 </body>
 </html>
