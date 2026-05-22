@@ -2,7 +2,7 @@
 
 Projeto feito em colaboração com:
 
-João Rafael do Carmo Santos
+[João Rafael do Carmo Santos](https://github.com/docarmorafael)
 
 RGM: 47850094
 
