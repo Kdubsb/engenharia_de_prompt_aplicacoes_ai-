@@ -46,7 +46,7 @@ A plataforma tem como principal objetivo servir como um ambiente de postagens ad
 
 3. Site adaptativo: A plataforma funciona originalmente como um site, mas identificou-se que é altamente produtivo transformá-la em um WebApp. Ou seja, reforçando a limitação anterior de integrar ao sistema da UDF.
 
-4. Atualizações constantes: Por ser uma plataforma que serve para notificar sobre registros acadêmicos, é necessário que a moderação esteja atualizando constantemente eventos acadêmicos concluídos, em andamento, futuros ou cancelados.
+4. Atualizações constantes: Por ser uma plataforma que serve para notificar sobre registros acadêmicos, é necessário que a moderação esteja atualizando constantemente sobre eventos acadêmicos concluídos, em andamento, futuros ou cancelados.
 
 ---
 
