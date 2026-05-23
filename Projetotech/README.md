@@ -10,7 +10,7 @@ RGM: 47850094
 
 ## 📌 Desafio Escolhido
 
-Projeto UDF News
+[Projeto UDF News](https://github.com/Kdubsb/engenharia_de_prompt_aplicacoes_ai-/blob/main/Projetotech/Projeto_Udf_News.html)
 
 ---
 
