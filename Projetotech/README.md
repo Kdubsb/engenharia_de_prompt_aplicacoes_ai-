@@ -10,7 +10,7 @@ RGM: 47850094
 
 ## 📌 Desafio Escolhido
 
-[Projeto UDF News](https://raw.githubusercontent.com/Projetotech/Projeto_Udf_News.html)
+[Projeto UDF News](https://raw.githubusercontent.com/user-attachments/files/Projeto_Udf_News.html)
 
 ---
 
