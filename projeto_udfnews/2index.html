@@ -1,728 +1,1647 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UDFNEWS - Ecossistema Universitário Interativo</title>
-    <style>
-        :root {
-            --bg-main: #ffffff;
-            --blue-udf: #0056b3;
-            --red-news: #cc0000;
-            --sidebar-bg: #111116;
-            --sidebar-text: #f5f5f7;
-            --accent-vibrant: #ff007f;
-            --student-green: #00b894;
-            
-            /* Cores de Alto Contraste para os Níveis */
-            --stroke-geral: #4a00e0;
-            --stroke-exatas: #00d2ff;
-            --stroke-humanas: #ff9f43;
-            --stroke-biologicas: #10ac84;
-            --stroke-semestre: #ee5253;
-            --stroke-curso: #ff9f43;
-            --stroke-sala: #222f3e;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="UDFNEWS — Portal de informações universitárias com sistema de círculos de interesse por área, semestre, curso e sala.">
+<meta name="theme-color" content="#ffffff">
+<title>UDFNEWS — Portal Universitário</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
+:root {
+  --blue:      #0050b3;
+  --blue-lt:   #1a5ce5;
+  --blue-dk:   #003366;
+  --red:       #e51a1a;
+  --red-lt:    #ff3a3a;
+  --yellow:    #f5c800;
+  --green:     #00b341;
+  --purple:    #7b2fff;
+  --orange:    #ff6b00;
+  --cyan:      #00c2e0;
+  --pink:      #e5006a;
 
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: var(--bg-main);
-            display: flex;
-            flex-direction: column;
-        }
+  --bg:        #ffffff;
+  --surface:   #f5f5f5;
+  --card:      #fafafa;
+  --card2:     #f0f0f0;
+  --border:    rgba(0,0,0,0.08);
+  --border2:   rgba(0,0,0,0.14);
+  --text:      #1a1a1a;
+  --muted:     rgba(26,26,26,0.65);
+  --faint:     rgba(26,26,26,0.40);
 
-        /* BARRA SUPERIOR DE PERFIL (CONTROLE DE TELAS) */
-        header {
-            width: 100%;
-            height: 65px;
-            background-color: #0d0d11;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 20;
-        }
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --radius-pill: 999px;
 
-        .brand {
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: -1px;
-        }
-        .brand .udf { color: #38ef7d; }
-        .brand .news { color: var(--red-news); }
+  --topbar-h: 56px;
+  --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+}
 
-        .profile-switcher {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
 
-        .view-btn {
-            padding: 8px 16px;
-            border: 2px solid #333;
-            background: transparent;
-            color: #aaa;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+[data-theme="dark"] {
+  --bg:        #0f1115;
+  --surface:   #171a21;
+  --card:      #1d212b;
+  --card2:     #252b36;
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(255,255,255,0.16);
+  --text:      #f3f6fb;
+  --muted:     rgba(243,246,251,0.72);
+  --faint:     rgba(243,246,251,0.45);
+}
+[data-theme="dark"] header#topbar,
+[data-theme="dark"] aside#panel,
+[data-theme="dark"] #breadcrumb,
+[data-theme="dark"] #legend,
+[data-theme="dark"] .login-box,
+[data-theme="dark"] .news-chip {
+  background: rgba(23,26,33,0.95);
+}
+[data-theme="dark"] main#canvas-wrap {
+  background: linear-gradient(135deg, #0f1115 0%, #171a21 100%);
+}
 
-        .view-btn.active {
-            border-color: #38ef7d;
-            color: white;
-            background: rgba(56, 239, 125, 0.2);
-        }
+html { scroll-behavior: smooth; }
 
-        /* ESTRUTURA PRINCIPAL */
-        #main-container {
-            display: flex;
-            width: 100%;
-            height: calc(100% - 65px);
-            position: relative;
-        }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100dvh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-        /* ABAS LATERAIS (ADMIN E AGENDA) */
-        aside {
-            width: 320px;
-            height: 100%;
-            background-color: var(--sidebar-bg);
-            color: var(--sidebar-text);
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            z-index: 10;
-            box-shadow: 0 0 20px rgba(0,0,0,0.4);
-        }
+button { cursor: pointer; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
 
-        .panel-padding {
-            padding: 20px;
-        }
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
 
-        h2 {
-            font-size: 14px;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 5px;
-        }
+/* ══════════════════════════════════════════════════════
+   SCROLLBAR
+══════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.28); }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 11px; margin-bottom: 5px; color: #aaa; text-transform: uppercase;}
-        input, select, textarea {
-            width: 100%; padding: 10px; background-color: #1f1f26; border: 1px solid #333;
-            border-radius: 6px; color: white; font-size: 13px;
-        }
-        input:focus, select:focus, textarea:focus { border-color: #38ef7d; outline: none; }
+/* ══════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════ */
+footer#site-footer {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 180;
+  height: 42px;
+  background: rgba(255,255,255,0.97);
+  border-top: 1px solid var(--border2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(12px, 4vw, 40px);
+  padding-inline: clamp(12px, 3vw, 24px);
+  font-size: 11px;
+  color: var(--muted);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+[data-theme="dark"] footer#site-footer {
+  background: rgba(23,26,33,0.97);
+}
+.footer-label {
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.footer-dev {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.footer-dev-name {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 11px;
+}
+.footer-gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-pill);
+  padding: 2px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  text-decoration: none;
+}
+.footer-gh-link:hover {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+.footer-gh-link svg {
+  width: 11px; height: 11px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.footer-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border2);
+  flex-shrink: 0;
+}
 
-        button.action-btn {
-            width: 100%; padding: 12px; border: none; border-radius: 6px; color: white;
-            font-weight: bold; cursor: pointer; background: linear-gradient(135deg, #0056b3, #00c6ff);
-            transition: opacity 0.2s;
-        }
-        button.action-btn:hover { opacity: 0.9; }
+/* ══════════════════════════════════════════════════════
+   TOPBAR
+══════════════════════════════════════════════════════ */
+header#topbar {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 200;
+  height: var(--topbar-h);
+  background: rgba(255,255,255,0.97);
+  border-bottom: 2px solid var(--blue);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: clamp(12px, 3vw, 24px);
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
-        /* PAINEL DE AGENDA DIREITO */
-        #agenda-panel {
-            background-color: #f8f9fa;
-            border-left: 1px solid #e1e8ed;
-            color: #2c3e50;
-        }
-        #agenda-panel h2 { color: #555; border-bottom: 1px solid #ddd;}
+/* Logo */
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(22px, 4vw, 30px);
+  letter-spacing: 2px;
+  line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.logo .u { color: var(--blue); }
+.logo .n { color: var(--red); }
+.logo .tagline {
+  font-family: 'Nunito', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-top: -2px;
+}
 
-        .event-card {
-            background: white;
-            border-left: 4px solid var(--stroke-geral);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .event-card.area { border-left-color: var(--stroke-exatas); }
-        .event-card.semestre { border-left-color: var(--stroke-semestre); }
-        .event-card.curso { border-left-color: var(--stroke-curso); }
-        .event-card.sala { border-left-color: var(--stroke-sala); }
+/* Nav */
+nav#main-nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+nav#main-nav::-webkit-scrollbar { display: none; }
 
-        .event-card h4 { font-size: 14px; margin-bottom: 4px; color: #111; }
-        .event-card p { font-size: 12px; color: #555; line-height: 1.4; }
-        .event-tag {
-            display: inline-block; font-size: 9px; font-weight: bold; background: #eee;
-            padding: 2px 6px; border-radius: 10px; margin-top: 6px; text-transform: uppercase;
-        }
+.tab-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  padding: 5px 14px;
+  border-radius: var(--radius-pill);
+  font-size: clamp(10px, 1.5vw, 12px);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.tab-btn:hover,
+.tab-btn[aria-selected="true"] {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+.tab-btn.admin-tab { border-color: rgba(229,26,26,0.5); color: var(--red); }
+.tab-btn.admin-tab:hover,
+.tab-btn.admin-tab[aria-selected="true"] {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+}
 
-        /* ÁREA CENTRAL DO MAPA */
-        #canvas-wrapper {
-            flex-grow: 1;
-            height: 100%;
-            position: relative;
-            background-color: #ffffff;
-        }
+/* Zoom controls */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.zoom-btn {
+  width: 30px; height: 30px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition);
+  line-height: 1;
+}
+.zoom-btn:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+#zoom-val {
+  min-width: 40px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+}
 
-        canvas { width: 100%; height: 100%; display: block; cursor: grab; }
-        canvas:active { cursor: grabbing; }
+/* Hamburger (mobile) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 7px 8px;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
 
-        /* INTERFACE EXCLUSIVA DO ALUNO (BOTÕES FLUTUANTES) */
-        .student-actions {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 15;
-        }
+/* ══════════════════════════════════════════════════════
+   CANVAS WRAPPER
+══════════════════════════════════════════════════════ */
+main#canvas-wrap {
+  position: fixed;
+  inset-block-start: var(--topbar-h);
+  inset: var(--topbar-h) 0 42px 0;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+main#canvas-wrap.grabbing { cursor: grabbing; }
 
-        .float-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 30px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-ouvidoria { background: linear-gradient(135deg, #00b894, #00cea6); }
-        .btn-sair { background: linear-gradient(135deg, #ff7675, #d63031); }
+#canvas {
+  position: absolute;
+  width: 3600px;
+  height: 3200px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
 
-        /* TOAST NOTIFICAÇÃO */
-        .toast {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translate(-50%, -100px);
-            background: #2ecc71;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 200;
-        }
-        .toast.show { transform: translate(-50%, 0); }
+/* ══════════════════════════════════════════════════════
+   CIRCLES
+══════════════════════════════════════════════════════ */
+.circle-group {
+  position: absolute;
+  cursor: pointer;
+}
+.circle-bg {
+  position: absolute;
+  border-radius: 50%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,80,179,0.12);
+}
+.circle-group:hover .circle-bg {
+  transform: scale(1.035);
+  box-shadow: 0 4px 12px rgba(0,80,179,0.20);
+}
+.circle-label {
+  position: absolute;
+  text-align: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.8);
+  line-height: 1.2;
+  color: #1a1a1a;
+}
+.news-chip {
+  position: absolute;
+  background: rgba(255,255,255,0.95);
+  border-radius: 7px;
+  padding: 5px 7px;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #1a1a1a;
+  pointer-events: none;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  backdrop-filter: blur(4px);
+}
+.news-chip .nc-tag {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 2px;
+}
+.news-chip .nc-title {
+  font-weight: 700;
+  line-height: 1.25;
+  color: #1a1a1a;
+}
+.news-chip .nc-time {
+  font-size: 7px;
+  opacity: 0.55;
+  margin-top: 2px;
+  color: var(--muted);
+}
 
-        /* POPUP MODAL OUVIDORIA */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); display: flex; align-items: center;
-            justify-content: center; z-index: 300; display: none;
-        }
-        .modal-content {
-            background: white; padding: 30px; border-radius: 12px; width: 400px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
+/* ══════════════════════════════════════════════════════
+   BREADCRUMB + HINT
+══════════════════════════════════════════════════════ */
+#breadcrumb {
+  position: fixed;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-pill);
+  padding: 6px 18px;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  backdrop-filter: blur(14px);
+  z-index: 90;
+  pointer-events: none;
+  max-width: 90vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+#breadcrumb strong { color: var(--text); }
+#breadcrumb .sep { color: var(--faint); }
 
-        /* UTILITÁRIO DE NAVEGAÇÃO HINT */
-        .controls-hint {
-            position: absolute; bottom: 20px; right: 20px;
-            background: rgba(0, 0, 0, 0.8); color: white;
-            padding: 10px 18px; border-radius: 20px; font-size: 11px;
-            pointer-events: none; text-align: right; line-height: 1.4;
-        }
-    </style>
+#hint {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,80,179,0.08);
+  border: 1px solid rgba(0,80,179,0.18);
+  border-radius: var(--radius-md);
+  padding: 5px 16px;
+  font-size: 11px;
+  color: var(--blue);
+  z-index: 90;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════
+   SIDE PANEL
+══════════════════════════════════════════════════════ */
+aside#panel {
+  position: fixed;
+  inset-block: var(--topbar-h) 0;
+  inset-inline-end: 0;
+  width: min(360px, 100vw);
+  background: rgba(255,255,255,0.98);
+  border-left: 1px solid var(--border2);
+  z-index: 150;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 18px 30px;
+  backdrop-filter: blur(20px);
+  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+}
+aside#panel.open { transform: translateX(0); }
+
+.panel-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.panel-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+.panel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  background: rgba(0,80,179,0.08);
+  color: var(--blue);
+}
+
+#panel-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(18px,3vw,24px);
+  line-height: 1.2;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+#panel-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.panel-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 16px;
+}
+
+.panel-news-item {
+  background: var(--card);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--blue);
+  transition: background var(--transition), transform 0.15s;
+}
+.panel-news-item:hover {
+  background: var(--card2);
+  transform: translateX(2px);
+}
+.pni-tag {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.pni-title {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.pni-body {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.pni-meta {
+  font-size: 10px;
+  color: var(--faint);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--faint);
+  font-size: 13px;
+}
+.empty-state .es-icon { font-size: 32px; margin-bottom: 10px; }
+
+/* ══════════════════════════════════════════════════════
+   MOBILE DRAWER (nav)
+══════════════════════════════════════════════════════ */
+#mobile-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  pointer-events: none;
+}
+#mobile-drawer.open { pointer-events: all; }
+.drawer-scrim {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.4);
+  opacity: 0;
+  transition: opacity 0.3s;
+  backdrop-filter: blur(4px);
+}
+#mobile-drawer.open .drawer-scrim { opacity: 1; }
+.drawer-content {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 260px;
+  background: var(--surface);
+  border-left: 1px solid var(--border2);
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+  padding: 70px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.06);
+}
+#mobile-drawer.open .drawer-content { transform: translateX(0); }
+.drawer-content .tab-btn {
+  display: block;
+  text-align: left;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+/* ══════════════════════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════════════════════ */
+section#admin-panel {
+  position: fixed;
+  inset: var(--topbar-h) 0 0 0;
+  background: var(--bg);
+  z-index: 190;
+  display: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(16px, 3vw, 28px);
+}
+section#admin-panel.open { display: block; }
+
+.admin-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.admin-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(24px, 4vw, 34px);
+  letter-spacing: 2px;
+  line-height: 1;
+  color: var(--text);
+}
+.admin-title span { color: var(--red); }
+.admin-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.stat-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.stat-number {
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--blue);
+}
+.stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.admin-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 2.5vw, 22px);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.admin-card-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* Form elements */
+.form-group { margin-bottom: 13px; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,80,179,0.12);
+}
+.form-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.form-select option { background: #ffffff; color: var(--text); }
+.form-textarea { resize: vertical; min-height: 82px; line-height: 1.5; }
+
+.btn-primary {
+  background: var(--blue);
+  border: none;
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: var(--radius-md);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  transition: background var(--transition), transform 0.15s;
+  width: 100%;
+}
+.btn-primary:hover { background: var(--blue-dk); }
+.btn-primary:active { transform: scale(0.98); }
+
+/* News table */
+.news-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.news-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  min-width: 380px;
+}
+.news-table th {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.news-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  vertical-align: top;
+}
+.td-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.del-btn {
+  background: transparent;
+  border: 1px solid rgba(229,26,26,0.4);
+  color: var(--red);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: background var(--transition), color var(--transition);
+}
+.del-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* ══════════════════════════════════════════════════════
+   LOGIN MODAL
+══════════════════════════════════════════════════════ */
+dialog#login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0,0,0,0.50);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: none;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+}
+dialog#login-modal.open {
+  display: flex;
+}
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 5vw, 36px);
+  width: min(340px, 90vw);
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+.login-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: 3px;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.login-logo .u { color: var(--blue); }
+.login-logo .n { color: var(--red); }
+.login-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.login-err {
+  color: var(--red);
+  font-size: 12px;
+  margin-top: 10px;
+  display: none;
+}
+.login-hint {
+  margin-top: 14px;
+  font-size: 10px;
+  color: var(--faint);
+}
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 999;
+  background: var(--green);
+  color: #fff;
+  padding: 11px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 700;
+  transform: translateY(70px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,179,65,0.25);
+}
+#toast.show { transform: translateY(0); opacity: 1; }
+
+/* ══════════════════════════════════════════════════════
+   LEVEL LEGEND
+══════════════════════════════════════════════════════ */
+#legend {
+  position: fixed;
+  top: calc(var(--topbar-h) + 12px);
+  left: 12px;
+  z-index: 80;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  nav#main-nav { display: none; }
+  .hamburger { display: flex; }
+  .zoom-controls #zoom-val { display: none; }
+  .zoom-btn { width: 26px; height: 26px; font-size: 16px; }
+  #legend { display: none; }
+
+  aside#panel { width: 100vw; border-left: none; border-top: 2px solid var(--blue); }
+
+  #breadcrumb { bottom: 10px; font-size: 11px; padding: 5px 12px; }
+  #hint { bottom: 48px; font-size: 10px; }
+}
+
+@media (max-width: 420px) {
+  .admin-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; }
+}
+</style>
 </head>
+
 <body>
 
-    <!-- NOTIFICAÇÃO TOAST -->
-    <div id="toast" class="toast">Ação executada com sucesso!</div>
+<!-- ══ TOPBAR ══════════════════════════════════════════════════════════ -->
+<header id="topbar" role="banner">
 
-    <!-- MODAL DE OUVIDORIA -->
-    <div id="ouvidoria-modal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px; color: #111;">Ouvidoria UDFNEWS</h3>
-            <div class="form-group">
-                <label style="color: #555;">Tipo de Manifestação</label>
-                <select id="ouv-tipo" style="background:#f5f6fa; color:#333; border: 1px solid #ddd;">
-                    <option value="Sugestão">💡 Sugestão</option>
-                    <option value="Elogio">❤️ Elogio</option>
-                    <option value="Reclamação">⚠️ Reclamação</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label style="color: #555;">Sua Mensagem</label>
-                <textarea id="ouv-msg" rows="4" style="background:#f5f6fa; color:#333; border: 1px solid #ddd;" placeholder="Escreva aqui..."></textarea>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="action-btn" onclick="enviarOuvidoria()" style="background:#00b894;">Enviar</button>
-                <button class="action-btn" onclick="fecharModal()" style="background:#bbb;">Cancelar</button>
-            </div>
-        </div>
+  <div class="logo" aria-label="UDFNEWS">
+    <span class="u">UDF</span><span class="n">NEWS</span>
+    <span class="tagline">Portal Universitário</span>
+  </div>
+
+  <!-- Desktop nav -->
+  <nav id="main-nav" aria-label="Navegação principal">
+    <button class="tab-btn" aria-selected="true"  onclick="switchTab('map',this)"  role="tab">🌐 Mapa</button>
+    <button class="tab-btn" aria-selected="false" onclick="switchTab('feed',this)" role="tab">📰 Feed</button>
+    <button class="tab-btn admin-tab"             onclick="openAdmin()"            role="tab">⚙️ Admin</button>
+  </nav>
+
+  <!-- Zoom -->
+  <div class="zoom-controls" role="group" aria-label="Controles de zoom">
+    <button class="zoom-btn" onclick="adjustZoom(-0.15)" aria-label="Reduzir zoom" title="Zoom −">−</button>
+    <span id="zoom-val" aria-live="polite" aria-atomic="true">60%</span>
+    <button class="zoom-btn" onclick="adjustZoom(0.15)"  aria-label="Aumentar zoom" title="Zoom +">+</button>
+    <button class="zoom-btn" onclick="resetView()"       aria-label="Resetar visualização" title="Reset">⌂</button>
+  </div>
+
+  <button class="zoom-btn" onclick="toggleTheme()" aria-label="Alternar modo escuro" title="Modo escuro">🌙</button>
+
+  <!-- Hamburger (mobile) -->
+  <button class="hamburger" onclick="toggleDrawer()" aria-label="Menu" aria-expanded="false" id="hamburger-btn">
+    <span></span><span></span><span></span>
+  </button>
+
+</header>
+
+<!-- ══ CANVAS ══════════════════════════════════════════════════════════ -->
+<main id="canvas-wrap" aria-label="Mapa interativo de círculos de interesse">
+  <div id="canvas" role="img" aria-label="Círculos de interesse universitários"></div>
+</main>
+
+<!-- ══ LEGEND ══════════════════════════════════════════════════════ -->
+<aside id="legend" aria-label="Legenda de níveis">
+  <div class="legend-item"><span class="legend-dot" style="background:#f5c800"></span>Universidade</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#0050b3"></span>Área — Exatas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#e5006a"></span>Área — Humanas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00b341"></span>Área — Biológicas</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#ff6b00"></span>Semestre</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#7b2fff"></span>Curso</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#00c2e0"></span>Sala de Aula</div>
+</aside>
+
+<!-- ══ BREADCRUMB ══════════════════════════════════════════════════════ -->
+<nav id="breadcrumb" aria-label="Localização atual">
+  <strong>UDF</strong><span class="sep">›</span>Todos os Interesses
+</nav>
+
+<p id="hint" role="status" aria-live="polite">
+  🖱️ Role para zoom · Arraste para navegar · Clique nos círculos
+</p>
+
+<!-- ══ SIDE PANEL ══════════════════════════════════════════════════════ -->
+<aside id="panel" role="complementary" aria-label="Detalhes do grupo" aria-hidden="true">
+  <button class="panel-close" onclick="closePanel()" aria-label="Fechar painel">×</button>
+  <div id="panel-badge" class="panel-badge"></div>
+  <h2 id="panel-title"></h2>
+  <p  id="panel-desc"></p>
+  <div class="panel-divider"></div>
+  <section id="panel-news-list" aria-label="Notícias do grupo"></section>
+</aside>
+
+<!-- ══ MOBILE DRAWER ══════════════════════════════════════════════ -->
+<div id="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu de navegação" aria-hidden="true">
+  <div class="drawer-scrim" onclick="toggleDrawer()"></div>
+  <div class="drawer-content">
+    <button class="tab-btn" onclick="switchTab('map');  toggleDrawer()">🌐 Mapa de Interesses</button>
+    <button class="tab-btn" onclick="switchTab('feed'); toggleDrawer()">📰 Feed Geral</button>
+    <button class="tab-btn admin-tab" onclick="openAdmin(); toggleDrawer()">⚙️ Painel Admin</button>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ════════════════════════════════════════════════════ -->
+<section id="admin-panel" role="region" aria-label="Painel administrativo">
+
+  <header class="admin-header">
+    <div>
+      <h1 class="admin-title"><span>UDF</span>NEWS — Admin</h1>
+      <p class="admin-subtitle">Gerencie publicações e usuários delegados</p>
+    </div>
+    <button class="tab-btn" onclick="closeAdmin()">← Voltar ao Mapa</button>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats-grid" role="group" aria-label="Estatísticas">
+    <div class="stat-card">
+      <p class="stat-label">Publicações</p>
+      <p class="stat-number" id="stat-news">0</p>
+      <p class="stat-sub">em todos os níveis</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Grupos</p>
+      <p class="stat-number">63</p>
+      <p class="stat-sub">geral + áreas + semestres + salas</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Representantes</p>
+      <p class="stat-number">24</p>
+      <p class="stat-sub">com acesso delegado</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-label">Visualizações hoje</p>
+      <p class="stat-number">1.847</p>
+      <p class="stat-sub">em todas as plataformas</p>
+    </div>
+  </div>
+
+  <div class="admin-grid">
+
+    <!-- Publish form -->
+    <article class="admin-card">
+      <h2 class="admin-card-title">📢 Publicar Nova Notícia</h2>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-level">Nível de Destino</label>
+        <select class="form-select" id="pub-level" onchange="updatePubTargets()">
+          <option value="geral">🌐 Geral — Toda a Universidade</option>
+          <option value="area">📚 Área de Conhecimento</option>
+          <option value="semestre">🗓 Semestre da Área</option>
+          <option value="curso">🎓 Curso</option>
+          <option value="sala">🏫 Sala de Aula</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="pub-target-group">
+        <label class="form-label" for="pub-target">Destino Específico</label>
+        <select class="form-select" id="pub-target"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-title">Título da Notícia</label>
+        <input class="form-input" id="pub-title" type="text" placeholder="Ex: Semana de Tecnologia 2025" maxlength="80">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-body">Conteúdo</label>
+        <textarea class="form-textarea" id="pub-body" placeholder="Descreva o evento ou informação..." maxlength="400"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="pub-author">Autor / Publicador</label>
+        <input class="form-input" id="pub-author" type="text" placeholder="Nome ou setor" maxlength="50">
+      </div>
+
+      <button class="btn-primary" onclick="publishNews()">📤 Publicar Agora</button>
+    </article>
+
+    <!-- News list -->
+    <article class="admin-card">
+      <h2 class="admin-card-title">📋 Publicações Recentes</h2>
+      <div class="news-table-wrap">
+        <table class="news-table" aria-label="Lista de publicações">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Nível</th>
+              <th>Destino</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="admin-news-list"></tbody>
+        </table>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ══ LOGIN MODAL ════════════════════════════════════════════════════ -->
+<dialog id="login-modal" aria-modal="true" aria-label="Login de administrador">
+  <div class="login-box">
+    <p class="login-logo"><span class="u">UDF</span><span class="n">NEWS</span></p>
+    <p class="login-sub">Acesso Administrador / Representante</p>
+
+    <div class="form-group">
+      <label class="form-label" for="login-user">Usuário</label>
+      <input class="form-input" id="login-user" type="text" value="admin" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="login-pass">Senha</label>
+      <input class="form-input" id="login-pass" type="password" value="udf2025" autocomplete="current-password">
     </div>
 
-    <!-- HEADER DE PERFIL -->
-    <header>
-        <div class="brand"><span class="udf">UDF</span><span class="news">NEWS</span></div>
-        <div class="profile-switcher">
-            <span style="font-size:12px; color:#888;">AMBIENTE ATIVO:</span>
-            <button id="view-admin" class="view-btn active" onclick="switchView('admin')">Coordenador / Admin</button>
-            <button id="view-aluno" class="view-btn" onclick="switchView('aluno')">Aluno / Usuário</button>
-        </div>
-    </header>
+    <button class="btn-primary" onclick="doLogin()">Entrar</button>
+    <p class="login-err" id="login-err" role="alert">Usuário ou senha incorretos.</p>
+    <p class="login-hint">Demo: admin / udf2025</p>
+  </div>
+</dialog>
 
-    <div id="main-container">
-        <!-- BARRA LATERAL ESQUERDA - EXCLUSIVA ADMIN -->
-        <aside id="admin-sidebar">
-            <div class="panel-padding">
-                <h2>⚙️ Parâmetros da Estrutura</h2>
-                <div class="form-group">
-                    <label for="cfg-semestres">Semestres em Linha</label>
-                    <input type="number" id="cfg-semestres" value="8" min="1" max="12">
-                </div>
-                <div class="form-group">
-                    <label for="cfg-cursos">Cursos por Semestre</label>
-                    <input type="number" id="cfg-cursos" value="4" min="1" max="6">
-                </div>
-                <div class="form-group">
-                    <label for="cfg-salas">Salas de Aula por Curso</label>
-                    <input type="number" id="cfg-salas" value="4" min="1" max="6">
-                </div>
-                <button class="action-btn" id="btn-rebuild" style="background:#4a00e0; margin-bottom:20px;">Reconfigurar Grade</button>
+<!-- ══ TOAST ══════════════════════════════════════════════════════════ -->
+<div id="toast" role="status" aria-live="polite" aria-atomic="true">✅ Publicado com sucesso!</div>
 
-                <h2>📢 Lançador de Avisos</h2>
-                <div class="form-group">
-                    <label for="news-title">Título do Evento</label>
-                    <input type="text" id="news-title" placeholder="Ex: Avaliação Global">
-                </div>
-                <div class="form-group">
-                    <label for="news-desc">Descrição</label>
-                    <textarea id="news-desc" rows="3" placeholder="Dados importantes do evento..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="news-level">Destino / Escopo</label>
-                    <select id="news-level">
-                        <option value="geral">Geral (Faculdade)</option>
-                        <option value="area">Área de Ensino</option>
-                        <option value="semestre">Semestre Letivo</option>
-                        <option value="curso">Grade de Curso</option>
-                        <option value="sala">Turma / Sala de Aula</option>
-                    </select>
-                </div>
+<!-- ══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
 
-                <!-- Filtros em Cascata Hidratados Dinamicamente -->
-                <div id="div-f-area" class="form-group" style="display:none;"><label>Área</label><select id="f-area"><option value="Exatas">Exatas</option><option value="Humanas">Humanas</option><option value="Biológicas">Biológicas</option></select></div>
-                <div id="div-f-semestre" class="form-group" style="display:none;"><label>Semestre</label><select id="f-semestre"></select></div>
-                <div id="div-f-curso" class="form-group" style="display:none;"><label>Curso</label><select id="f-curso"></select></div>
-                <div id="div-f-sala" class="form-group" style="display:none;"><label>Sala</label><select id="f-sala"></select></div>
+/* ── DATA ────────────────────────────────────────────────────────── */
+const AREAS = [
+  { id:'exatas',  name:'Ciências Exatas',    color:'#0050b3', bg:'rgba(0,80,179,0.08)',   icon:'⚡' },
+  { id:'humanas', name:'Ciências Humanas',   color:'#e5006a', bg:'rgba(229,0,106,0.08)',   icon:'📖' },
+  { id:'bio',     name:'Ciências Biológicas',color:'#00b341', bg:'rgba(0,179,65,0.08)',    icon:'🌱' },
+];
+const CURSOS = {
+  exatas:  ['Eng. Software','Matemática','Física','Ciênc. Comp.'],
+  humanas: ['Direito','Filosofia','Letras','Pedagogia'],
+  bio:     ['Biomedicina','Farmácia','Nutrição','Biologia'],
+};
+const LEVEL_META = {
+  geral:    { color:'#f5c800', label:'Geral' },
+  area:     { color:'#0050b3', label:'Área'  },
+  semestre: { color:'#ff6b00', label:'Semestre' },
+  curso:    { color:'#7b2fff', label:'Curso' },
+  sala:     { color:'#00c2e0', label:'Sala'  },
+};
 
-                <button class="action-btn" id="btn-postar" style="background:linear-gradient(135deg, #cc0000, #ff4757);">Emitir Comunicado</button>
-            </div>
-        </aside>
+let NEWS = [
+  { id:1,  level:'geral',    target:'geral',                  title:'Semana da Inovação UDF 2025',             body:'Inscrições abertas para o maior evento de tecnologia e empreendedorismo da faculdade. Haverá palestras, hackathon e feira de projetos.',                  author:'Reitoria',          time:'há 2h',    color:'#f5c800' },
+  { id:2,  level:'geral',    target:'geral',                  title:'Restaurante Universitário — novos horários', body:'A partir de segunda-feira, o RU funcionará das 11h às 15h e das 18h às 21h. O cardápio vegetariano foi ampliado.',                                   author:'Administração',     time:'há 5h',    color:'#f5c800' },
+  { id:3,  level:'geral',    target:'geral',                  title:'Resultado do Processo Seletivo de Monitoria', body:'Confira no portal acadêmico os aprovados para as vagas de monitoria do 2º semestre de 2025.',                                                      author:'Pró-Reitoria',      time:'ontem',    color:'#f5c800' },
+  { id:4,  level:'area',     target:'exatas',                 title:'Olimpíada de Matemática UDF — Inscrições', body:'Etapa interna acontece em 15/08. Podem participar alunos de todos os períodos de Exatas.',                                                            author:'Coord. Exatas',     time:'há 3h',    color:'#0050b3' },
+  { id:5,  level:'area',     target:'exatas',                 title:'Lab de Robótica abre vagas para IC',       body:'Equipe de pesquisa está aceitando alunos de graduação para iniciação científica em IA e Robótica.',                                                    author:'Pesquisa UDF',      time:'há 6h',    color:'#0050b3' },
+  { id:6,  level:'area',     target:'humanas',                title:'Ciclo de Palestras: Filosofia Contemporânea', body:'Prof. Dr. Marcos Alves ministra série sobre Ética Digital. Início: quarta às 19h. Entrada gratuita.',                                              author:'Coord. Humanas',    time:'há 4h',    color:'#e5006a' },
+  { id:7,  level:'area',     target:'humanas',                title:'Simulado OAB gratuito para alunos de Direito', body:'Parceria com escritório Pinto & Alves oferece simulado presencial gratuito no sábado às 8h.',                                                    author:'Coord. Direito',    time:'há 1h',    color:'#e5006a' },
+  { id:8,  level:'area',     target:'bio',                    title:'Semana da Biologia — DNA Day 2025',        body:'Exposição interativa sobre genética, biotecnologia e medicina. Entrada gratuita para todos os alunos.',                                                author:'Coord. Bio',        time:'há 7h',    color:'#00b341' },
+  { id:9,  level:'area',     target:'bio',                    title:'Novo laboratório de microbiologia inaugurado', body:'Instalações modernas com equipamentos de última geração disponíveis para aulas práticas a partir desta semana.',                                   author:'Infraestrutura',    time:'há 2h',    color:'#00b341' },
+  { id:10, level:'semestre', target:'exatas-1',               title:'Boas-vindas calouros Exatas — 1º Sem',    body:'Recepção na quinta às 9h no auditório principal. Presença obrigatória. Traga documento com foto.',                                                      author:'Centro Acadêmico',  time:'há 1h',    color:'#ff6b00' },
+  { id:11, level:'semestre', target:'exatas-4',               title:'Estágio supervisionado — prazo final',    body:'Documentação deve ser entregue na secretaria até 30/07. Não haverá prorrogação de prazo.',                                                              author:'Coord. Exatas',     time:'há 3h',    color:'#ff6b00' },
+  { id:12, level:'semestre', target:'humanas-3',              title:'Excursão pedagógica ao STF',              body:'Visita ao Supremo Tribunal Federal em 20/08. Vagas limitadas a 30 alunos. Inscreva-se na secretaria!',                                                  author:'Rep. Turma 3H',     time:'há 2h',    color:'#ff6b00' },
+  { id:13, level:'semestre', target:'bio-5',                  title:'Aula prática no Laboratório Central',     body:'5º semestre terá aula especial no Laboratório Central com microscopia eletrônica. Uso de jaleco obrigatório.',                                          author:'Coord. Bio',        time:'há 4h',    color:'#ff6b00' },
+  { id:14, level:'curso',    target:'Eng. Software',          title:'Hackathon UDF Soft — Equipes Abertas',   body:'Hackathon de 48h com tema IA para Inclusão Social. Monte sua equipe e inscreva-se. Premiação de R$ 3.000.',                                               author:'Coord. Eng. Soft',  time:'há 30min', color:'#7b2fff' },
+  { id:15, level:'curso',    target:'Direito',                title:'Julgamento Simulado — LGPD',             body:'Alunos do 5º período participam de tribunal simulado sobre caso real de violação de dados pessoais.',                                                     author:'Prof. Carvalho',    time:'há 2h',    color:'#7b2fff' },
+  { id:16, level:'curso',    target:'Biomedicina',            title:'Projeto de Extensão: Saúde Comunitária', body:'Alunos de Biomedicina realizam coleta de exames gratuitos em comunidades vulneráveis. Cadastre-se!',                                                     author:'Coord. Extensão',   time:'há 4h',    color:'#7b2fff' },
+  { id:17, level:'curso',    target:'Matemática',             title:'Palestra: Matemática Financeira Aplicada', body:'Prof. Ana Lima apresenta aplicações de cálculo diferencial em finanças e mercado de capitais. Amanhã às 10h.',                                         author:'Prof. Ana Lima',    time:'há 1h',    color:'#7b2fff' },
+  { id:18, level:'sala',     target:'Eng. Sof T1-S3',        title:'Prova AV2 — Eng. de Requisitos amanhã', body:'Conteúdo: UML, casos de uso, histórias de usuário. Prof. Ribeiro confirmou prova para 8h. Sala 302.',                                                     author:'Rep. Turma',        time:'há 1h',    color:'#00c2e0' },
+  { id:19, level:'sala',     target:'Eng. Sof T2-S3',        title:'Material POO disponível no portal',      body:'Prof. Fernanda postou slides e exercícios resolvidos de Programação Orientada a Objetos para revisão.',                                                  author:'Rep. Turma',        time:'há 3h',    color:'#00c2e0' },
+  { id:20, level:'sala',     target:'Direito T1-S2',          title:'Aula de Processo Civil cancelada',       body:'Prof. Lima está em congresso. Reposição na próxima sexta às 18h. Avise os colegas do grupo!',                                                            author:'Rep. Turma',        time:'há 45min', color:'#00c2e0' },
+  { id:21, level:'sala',     target:'Biomedi T3-S5',          title:'Relatório de Bioquímica — entrega hoje', body:'Relatório da aula prática de metabolismo lipídico vence hoje às 23h59. Envie pelo portal acadêmico.',                                                    author:'Rep. Turma',        time:'há 20min', color:'#00c2e0' },
+];
+let nextId = 22;
+let isAdmin = false;
 
-        <!-- CANVAS CENTRAL (ZOOM E ARRASTE) -->
-        <div id="canvas-wrapper">
-            <canvas id="canvasMiro"></canvas>
-            
-            <!-- Botões Dinâmicos do Modo Estudante -->
-            <div class="student-actions" id="student-overlay" style="display: none;">
-                <button class="float-btn btn-ouvidoria" onclick="abrirOuvidoria()">💬 Ouvidoria UDF</button>
-                <button class="float-btn btn-sair" onclick="logoutSimulado()">❌ Sair do App</button>
-            </div>
+/* ── CANVAS & TRANSFORM ─────────────────────────────────────────── */
+const wrap   = document.getElementById('canvas-wrap');
+const canvas = document.getElementById('canvas');
+let scale = 0.55, tx = -320, ty = -220;
+let dragging = false, lastX = 0, lastY = 0;
+let lastTouchDist = 0;
 
-            <div class="controls-hint">
-                Arrastar para mover o mapa | Scroll para dar Zoom<br>
-                <strong>Duplo clique nos círculos centraliza a visão</strong>
-            </div>
-        </div>
+function applyTransform() {
+  canvas.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+  document.getElementById('zoom-val').textContent = Math.round(scale * 100) + '%';
+}
 
-        <!-- BARRA LATERAL DIREITA - LISTAGEM DE EVENTOS FUTUROS -->
-        <aside id="agenda-panel">
-            <div class="panel-padding">
-                <h2>📅 Próximos Eventos & Avisos</h2>
-                <div id="agenda-feed-container">
-                    <!-- Gerado de forma reativa pelo JS -->
-                </div>
-            </div>
-        </aside>
-    </div>
+/* Mouse drag */
+wrap.addEventListener('mousedown', e => {
+  if (e.target.closest('.circle-group')) return;
+  dragging = true; lastX = e.clientX; lastY = e.clientY;
+  wrap.classList.add('grabbing');
+});
+window.addEventListener('mouseup', () => { dragging = false; wrap.classList.remove('grabbing'); });
+window.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  tx += e.clientX - lastX; ty += e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  applyTransform();
+});
 
-    <script>
-        const canvas = document.getElementById('canvasMiro');
-        const ctx = canvas.getContext('2d');
+/* Wheel zoom */
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const d = e.deltaY > 0 ? -0.09 : 0.09;
+  const rect = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const prev = scale;
+  scale = Math.max(0.12, Math.min(2.8, scale + d));
+  tx = mx - (mx - tx) * (scale / prev);
+  ty = my - (my - ty) * (scale / prev);
+  applyTransform();
+}, { passive: false });
 
-        // Configurações Globais Gerenciáveis
-        let config = { semestres: 8, cursosPorArea: 4, salasPorCurso: 4 };
+/* Touch pan + pinch-zoom */
+wrap.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastTouchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  } else if (e.touches.length === 1) {
+    dragging = true;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+  }
+}, { passive: true });
 
-        // Estados da Câmera estilo Miro
-        let cam = { x: 0, y: 0, zoom: 0.16, isDragging: false, sX: 0, sY: 0 };
-        let currentMode = 'admin';
+wrap.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 2) {
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    const ratio = dist / (lastTouchDist || dist);
+    const rect = wrap.getBoundingClientRect();
+    const mx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+    const my = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+    const prev = scale;
+    scale = Math.max(0.12, Math.min(2.8, scale * ratio));
+    tx = mx - (mx - tx) * (scale / prev);
+    ty = my - (my - ty) * (scale / prev);
+    lastTouchDist = dist;
+    applyTransform();
+  } else if (dragging && e.touches.length === 1) {
+    tx += e.touches[0].clientX - lastX;
+    ty += e.touches[0].clientY - lastY;
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
+    applyTransform();
+  }
+}, { passive: false });
 
-        // Banco de Dados reativo estruturado
-        let eventos = [
-            { level: 'geral', target: 'geral', title: 'Renovação de Matrícula 2026', desc: 'Prazo estendido para regularização das grades letivas sem juros adicionais.' },
-            { level: 'area', target: 'Exatas', title: 'Maratona de Programação Intercursos', desc: 'Competição com direito a premiação e horas complementares de extensão.' },
-            { level: 'area', target: 'Humanas', title: 'Simpósio de Ética e Sociedade', desc: 'Presença confirmada de palestrantes externos no anfiteatro.' },
-            { level: 'semestre', target: 'Exatas-3º Semestre', title: 'Entrega do Projeto Integrador I', desc: 'Submissão via portal até as 23:59 da sexta-feira.' },
-            { level: 'curso', target: 'Exatas-1º Semestre-Ciência da Computação', title: 'Aula Prática Extra de Lab', desc: 'Sábado letivo com foco em estruturas condicionais.' },
-            { level: 'sala', target: 'Humanas-1º Semestre-Direito-Sala 1', title: 'Entrega de Fichamento Prático', desc: 'Entregar impresso diretamente na mesa do professor regente.' }
-        ];
+wrap.addEventListener('touchend', () => { dragging = false; });
 
-        const cursosPorEixo = {
-            'Exatas': ['Ciência da Computação', 'Engenharia Civil', 'Análise de Sistemas', 'Banco de Dados', 'Redes de Computadores'],
-            'Humanas': ['Direito', 'Psicologia', 'Administração', 'Pedagogia', 'História'],
-            'Biológicas': ['Enfermagem', 'Biomedicina', 'Nutrição', 'Fisioterapia', 'Medicina Veterinária']
-        };
+function adjustZoom(d) {
+  scale = Math.max(0.12, Math.min(2.8, scale + d));
+  applyTransform();
+}
+function resetView() {
+  scale = 0.55; tx = -320; ty = -220; applyTransform();
+}
 
-        function resize() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+/* ── HELPERS ────────────────────────────────────────────────────── */
+function getNews(level, target) {
+  if (level === 'geral')    return NEWS.filter(n => n.level === 'geral');
+  if (level === 'area')     return NEWS.filter(n => n.level === 'area'     && n.target === target);
+  if (level === 'semestre') return NEWS.filter(n => n.level === 'semestre' && n.target === target);
+  if (level === 'curso')    return NEWS.filter(n => n.level === 'curso'    && n.target === target);
+  if (level === 'sala')     return NEWS.filter(n => n.level === 'sala'     && n.target === target);
+  return [];
+}
+
+function el(tag, cls, css) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (css) e.style.cssText = css;
+  return e;
+}
+
+/* ── CIRCLE BUILDER ─────────────────────────────────────────────── */
+function makeNewsChip(news, x, y, w, h) {
+  const d = el('div', 'news-chip', `left:${x}px;top:${y}px;width:${w}px;max-height:${h}px;border-left-color:${news.color}`);
+  d.innerHTML = `<div class="nc-tag" style="color:${news.color}">${LEVEL_META[news.level]?.label || news.level}</div><div class="nc-title">${news.title}</div><div class="nc-time">${news.time}</div>`;
+  return d;
+}
+
+function chipPositions(count, size, pad, cw, ch) {
+  const angles = [-110, -70, 70, 110].map(a => a * Math.PI / 180);
+  const r = size / 2 - pad - cw / 2 - 8;
+  const cx = size / 2, cy = size / 2;
+  return Array.from({ length: count }, (_, i) => ({
+    x: cx + r * Math.cos(angles[i] || 0) - cw / 2,
+    y: cy + r * Math.sin(angles[i] || 0) - ch / 2,
+  }));
+}
+
+function makeCircle(cfg) {
+  const g = el('div', 'circle-group', `left:${cfg.x}px;top:${cfg.y}px;width:${cfg.size}px;height:${cfg.size}px;`);
+  g.setAttribute('role', 'button');
+  g.setAttribute('aria-label', `${cfg.name} — clique para ver notícias`);
+  g.setAttribute('tabindex', '0');
+
+  // background
+  const bg = el('div', 'circle-bg', `width:${cfg.size}px;height:${cfg.size}px;background:${cfg.bg};border:2px solid ${cfg.color}35;`);
+  g.appendChild(bg);
+
+  // inner ring
+  const ring = el('div', '', `position:absolute;inset:5px;border-radius:50%;border:1px solid ${cfg.color}18;pointer-events:none;`);
+  g.appendChild(ring);
+
+  // chips
+  const items = getNews(cfg.level, cfg.target);
+  if (items.length && cfg.size >= 130) {
+    const cw = Math.min(cfg.size * 0.33, 108);
+    const ch = 56;
+    const pad = cfg.size * 0.11;
+    chipPositions(Math.min(items.length, 4), cfg.size, pad, cw, ch).forEach((pos, i) => {
+      g.appendChild(makeNewsChip(items[i], pos.x, pos.y, cw, ch));
+    });
+  }
+
+  // label
+  const ls  = Math.max(9, Math.min(cfg.size * 0.082, 22));
+  const lbl = el('div', 'circle-label', `left:50%;bottom:${Math.max(8, cfg.size * 0.09)}px;transform:translateX(-50%);font-size:${ls}px;color:${cfg.color};width:92%;text-align:center;`);
+  lbl.textContent = (cfg.icon ? cfg.icon + ' ' : '') + cfg.name;
+  g.appendChild(lbl);
+
+  g.addEventListener('click', e => { e.stopPropagation(); openPanel(cfg); });
+  g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPanel(cfg); } });
+
+  return g;
+}
+
+/* ── BUILD MAP ──────────────────────────────────────────────────── */
+function buildMap() {
+  canvas.innerHTML = '';
+
+  const CX = 1800, CY = 1600;
+
+  // GERAL
+  const gS = 720;
+  canvas.appendChild(makeCircle({
+    x: CX - gS/2, y: CY - gS/2, size: gS,
+    level:'geral', target:'geral',
+    name:'UNIVERSIDADE UDF', color:'#f5c800',
+    bg:'rgba(245,200,0,0.07)', icon:'🏛️'
+  }));
+
+  // AREA offsets
+  const aPos = [
+    { dx: -900, dy: -100 },  // exatas (left)
+    { dx:    0, dy: -860 },  // humanas (top)
+    { dx:  900, dy: -100 },  // bio (right)
+  ];
+  const aS = 500;
+
+  AREAS.forEach((area, ai) => {
+    const ap = aPos[ai];
+    const ax = CX + ap.dx - aS/2;
+    const ay = CY + ap.dy - aS/2;
+
+    canvas.appendChild(makeCircle({
+      x: ax, y: ay, size: aS,
+      level:'area', target: area.id,
+      name: area.name, color: area.color,
+      bg: area.bg, icon: area.icon
+    }));
+
+    // SEMESTRES (8 ao redor da área)
+    const sS = 190, sR = 330;
+    for (let s = 1; s <= 8; s++) {
+      const ang = (s - 1) * (Math.PI * 2 / 8) - Math.PI / 2;
+      const sx = ax + aS/2 + sR * Math.cos(ang) - sS/2;
+      const sy = ay + aS/2 + sR * Math.sin(ang) - sS/2;
+
+      canvas.appendChild(makeCircle({
+        x: sx, y: sy, size: sS,
+        level:'semestre', target:`${area.id}-${s}`,
+        name:`${s}º Sem`, color:'#ff6b00',
+        bg:'rgba(255,107,0,0.13)', icon:''
+      }));
+
+      // CURSOS (4 ao redor do semestre)
+      const cS = 66, cR = 76;
+      CURSOS[area.id].forEach((curso, ci) => {
+        const cang = ci * (Math.PI / 2) + Math.PI / 4;
+        const ccx = sx + sS/2 + cR * Math.cos(cang) - cS/2;
+        const ccy = sy + sS/2 + cR * Math.sin(cang) - cS/2;
+
+        canvas.appendChild(makeCircle({
+          x: ccx, y: ccy, size: cS,
+          level:'curso', target: curso,
+          name: curso.split(' ')[0], color:'#7b2fff',
+          bg:'rgba(123,47,255,0.20)', icon:''
+        }));
+
+        // SALAS (4 ao redor do curso)
+        const rS = 30, rR = 28;
+        for (let rm = 1; rm <= 4; rm++) {
+          const rang = (rm - 1) * (Math.PI / 2);
+          const rrx = ccx + cS/2 + rR * Math.cos(rang) - rS/2;
+          const rry = ccy + cS/2 + rR * Math.sin(rang) - rS/2;
+          const salaTarget = `${curso.substring(0, 8).trim()} T${rm}-S${s}`;
+
+          canvas.appendChild(makeCircle({
+            x: rrx, y: rry, size: rS,
+            level:'sala', target: salaTarget,
+            name:`T${rm}`, color:'#00c2e0',
+            bg:'rgba(0,194,224,0.22)', icon:''
+          }));
         }
-        window.addEventListener('resize', resize);
-        resize();
+      });
+    }
+  });
 
-        // Posiciona o ponto central inicial no centro do canvas
-        cam.x = canvas.width / 2; cam.y = canvas.height / 2;
+  updateStatNews();
+}
 
-        // --- SISTEMA ALTERNADOR DE TELAS (VISUALIZAÇÃO) ---
-        function switchView(mode) {
-            currentMode = mode;
-            document.getElementById('view-admin').classList.toggle('active', mode === 'admin');
-            document.getElementById('view-aluno').classList.toggle('active', mode === 'aluno');
-            document.getElementById('admin-sidebar').style.display = mode === 'admin' ? 'flex' : 'none';
-            document.getElementById('student-overlay').style.display = mode === 'aluno' ? 'flex' : 'none';
-            showToast(`Mudou para ambiente do ${mode === 'admin' ? 'Administrador' : 'Aluno'}`);
-        }
+/* ── PANEL ──────────────────────────────────────────────────────── */
+function openPanel(cfg) {
+  const items = getNews(cfg.level, cfg.target);
+  const lm = LEVEL_META[cfg.level] || { color: cfg.color, label: cfg.level };
 
-        // --- MOTOR GEOMÉTRICO (PREVINE SOBREPOSIÇÃO DOS CÍRCULOS) ---
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#ffffff"; // Fundo branco obrigatório
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const badge = document.getElementById('panel-badge');
+  badge.textContent = `${lm.label} · ${cfg.name}`;
+  badge.style.cssText = `background:${cfg.color}15;color:${cfg.color};`;
 
-            ctx.save();
-            ctx.translate(cam.x, cam.y);
-            ctx.scale(cam.zoom, cam.zoom);
+  document.getElementById('panel-title').textContent = cfg.name;
+  document.getElementById('panel-desc').textContent =
+    items.length ? `${items.length} publicação(ões) neste grupo` : 'Nenhuma publicação neste grupo ainda.';
 
-            const R_GERAL = 2400;
-            
-            // 1. Círculo Geral
-            ctx.beginPath(); ctx.arc(0, 0, R_GERAL, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(74, 0, 224, 0.01)'; ctx.fill();
-            ctx.strokeStyle = varColor('--stroke-geral'); ctx.lineWidth = 14 / cam.zoom;
-            ctx.lineWidth = Math.min(Math.max(10, 8 / cam.zoom), 40); ctx.stroke();
-            
-            renderTextNode("UDFNEWS - AMBIENTE CENTRAL UNIVERSITÁRIO", 0, -R_GERAL + 120, 75, varColor('--stroke-geral'), true);
-            renderCanvasEvents('geral', 'geral', 0, -R_GERAL + 350, 600);
+  const list = document.getElementById('panel-news-list');
+  list.innerHTML = '';
 
-            // 2. Círculos de Área
-            const areas = ['Exatas', 'Humanas', 'Biológicas'];
-            const R_AREA = 800;
-            const DIST_AREA = 1350; // Afastamento controlado para evitar qualquer colisão externa
+  if (!items.length) {
+    list.innerHTML = '<div class="empty-state"><p class="es-icon">📭</p><p>Sem notícias aqui ainda.</p></div>';
+  } else {
+    items.forEach(n => {
+      const d = el('article', 'panel-news-item');
+      d.style.borderLeftColor = n.color;
+      d.innerHTML = `
+        <p class="pni-tag" style="color:${n.color}">${LEVEL_META[n.level]?.label || n.level}</p>
+        <h3 class="pni-title">${n.title}</h3>
+        <p  class="pni-body">${n.body}</p>
+        <p  class="pni-meta"><span>✍️ ${n.author}</span><span>${n.time}</span></p>
+      `;
+      list.appendChild(d);
+    });
+  }
 
-            areas.forEach((area, aIdx) => {
-                const angArea = (aIdx * Math.PI * 2) / 3 - Math.PI / 2;
-                const aX = Math.cos(angArea) * DIST_AREA;
-                const aY = Math.sin(angArea) * DIST_AREA;
+  const panel = document.getElementById('panel');
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  updateBreadcrumb(cfg);
+}
 
-                let colorArea = area === 'Exatas' ? varColor('--stroke-exatas') : area === 'Humanas' ? varColor('--stroke-humanas') : varColor('--stroke-biologicas');
+function closePanel() {
+  const panel = document.getElementById('panel');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  document.getElementById('breadcrumb').innerHTML = '<strong>UDF</strong><span class="sep">›</span>Todos os Interesses';
+}
 
-                ctx.beginPath(); ctx.arc(aX, aY, R_AREA, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.fill();
-                ctx.strokeStyle = colorArea; ctx.stroke();
+function updateBreadcrumb(cfg) {
+  const lm = LEVEL_META[cfg.level] || { label: cfg.level };
+  document.getElementById('breadcrumb').innerHTML =
+    `<strong>UDF</strong><span class="sep">›</span><strong>${lm.label}</strong><span class="sep">›</span>${cfg.name}`;
+}
 
-                renderTextNode(`EIXO DE ${area.toUpperCase()}`, aX, aY - R_AREA + 70, 42, colorArea, true);
-                renderCanvasEvents('area', area, aX, aY - R_AREA + 220, 400);
+/* ── ADMIN ──────────────────────────────────────────────────────── */
+function openAdmin() {
+  if (!isAdmin) { document.getElementById('login-modal').classList.add('open'); return; }
+  document.getElementById('admin-panel').classList.add('open');
+  renderAdminNews();
+  updatePubTargets();
+}
+function closeAdmin() {
+  document.getElementById('admin-panel').classList.remove('open');
+  applySavedTheme();
+buildMap();
+}
 
-                // 3. Círculos de Semestre (Disposição Dinâmica Escalável)
-                const semestres = config.semestres;
-                const R_SEMESTRE = 200;
-                // Distorção de distância de acordo com a densidade de semestres
-                const DIST_SEMESTRE = 460;
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if (u === 'admin' && p === 'udf2025') {
+    isAdmin = true;
+    document.getElementById('login-modal').classList.remove('open');
+    openAdmin();
+  } else {
+    err.style.display = 'block';
+  }
+}
 
-                for(let s=1; s<=semestres; s++) {
-                    const angSem = (s * Math.PI * 2) / semestres;
-                    const sX = aX + Math.cos(angSem) * DIST_SEMESTRE;
-                    const sY = aY + Math.sin(angSem) * DIST_SEMESTRE;
+/* Enter key on login */
+['login-user','login-pass'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+});
 
-                    ctx.beginPath(); ctx.arc(sX, sY, R_SEMESTRE, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'; ctx.fill();
-                    ctx.strokeStyle = varColor('--stroke-semestre'); ctx.lineWidth = Math.min(Math.max(4, 2 / cam.zoom), 12); ctx.stroke();
+function updatePubTargets() {
+  const level = document.getElementById('pub-level').value;
+  const sel   = document.getElementById('pub-target');
+  sel.innerHTML = '';
+  const map = {
+    geral:    ['geral'],
+    area:     AREAS.map(a => a.id),
+    semestre: AREAS.flatMap(a => Array.from({length:8},(_,i)=>`${a.id}-${i+1}`)),
+    curso:    Object.values(CURSOS).flat(),
+    sala:     AREAS.flatMap(a => CURSOS[a.id].flatMap(c => Array.from({length:4},(_,i)=>`${c.substring(0,8).trim()} T${i+1}-S1`))),
+  };
+  (map[level] || []).forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = opt.textContent = o;
+    sel.appendChild(opt);
+  });
+}
 
-                    renderTextNode(`${s}º SEMESTRE`, sX, sY - R_SEMESTRE + 30, 16, varColor('--stroke-semestre'), true);
-                    let tSemestre = `${area}-${s}º Semestre`;
-                    renderCanvasEvents('semestre', tSemestre, sX, sY - R_SEMESTRE + 75, 130);
+function publishNews() {
+  const level  = document.getElementById('pub-level').value;
+  const target = document.getElementById('pub-target').value;
+  const title  = document.getElementById('pub-title').value.trim();
+  const body   = document.getElementById('pub-body').value.trim();
+  const author = document.getElementById('pub-author').value.trim() || 'Administrador';
+  if (!title || !body) { alert('Preencha o título e o conteúdo da notícia.'); return; }
 
-                    // 4. Círculos de Cursos (Tamanho Reduzido para evitar choque mútuo)
-                    const cursos = config.cursosPorArea;
-                    const R_CURSO = 55;
-                    const DIST_CURSO = 115;
+  const colorMap = {
+    geral:    '#f5c800',
+    area:     AREAS.find(a => a.id === target)?.color || '#0050b3',
+    semestre: '#ff6b00',
+    curso:    '#7b2fff',
+    sala:     '#00c2e0',
+  };
 
-                    for(let c=0; c<cursos; c++) {
-                        const angCur = (c * Math.PI * 2) / cursos;
-                        const cX = sX + Math.cos(angCur) * DIST_CURSO;
-                        const cY = sY + Math.sin(angCur) * DIST_CURSO;
+  NEWS.unshift({ id: nextId++, level, target, title, body, author, time: 'agora', color: colorMap[level] || '#f5c800' });
+  document.getElementById('pub-title').value = '';
+  document.getElementById('pub-body').value  = '';
 
-                        let nomeCurso = cursosPorEixo[area][c % cursosPorEixo[area].length] || `Curso Extra ${c+1}`;
+  renderAdminNews();
+  updateStatNews();
+  showToast();
+}
 
-                        ctx.beginPath(); ctx.arc(cX, cY, R_CURSO, 0, Math.PI * 2);
-                        ctx.fillStyle = '#ffffff'; ctx.fill();
-                        ctx.strokeStyle = '#d35400'; ctx.stroke();
+function deleteNews(id) {
+  NEWS = NEWS.filter(n => n.id !== id);
+  renderAdminNews();
+  updateStatNews();
+  buildMap();
+}
 
-                        renderTextNode(nomeCurso, cX, cY - R_CURSO + 12, 6, '#d35400', true);
-                        let tCurso = `${area}-${s}º Semestre-${nomeCurso}`;
-                        renderCanvasEvents('curso', tCurso, cX, cY - R_CURSO + 30, 42);
+function renderAdminNews() {
+  const tbody = document.getElementById('admin-news-list');
+  tbody.innerHTML = '';
+  NEWS.slice(0, 25).forEach(n => {
+    const lm  = LEVEL_META[n.level] || { color: n.color, label: n.level };
+    const tr  = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:700;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.title}</td>
+      <td><span class="td-badge" style="background:${lm.color}15;color:${lm.color}">${lm.label}</span></td>
+      <td style="font-size:11px;color:var(--muted);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.target}</td>
+      <td><button class="del-btn" onclick="deleteNews(${n.id})" aria-label="Excluir publicação">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
-                        // 5. Círculos de Sala de Aula (Microestrutura interna visível por ampliação)
-                        const salas = config.salasPorCurso;
-                        const R_SALA = 15;
-                        const DIST_SALA = 28;
+function updateStatNews() {
+  document.getElementById('stat-news').textContent = NEWS.length;
+}
 
-                        for(let sl=1; sl<=salas; sl++) {
-                            const angSala = (sl * Math.PI * 2) / salas;
-                            const slX = cX + Math.cos(angSala) * DIST_SALA;
-                            const slY = cY + Math.sin(angSala) * DIST_SALA;
+/* ── TOAST ──────────────────────────────────────────────────────── */
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
 
-                            ctx.beginPath(); ctx.arc(slX, slY, R_SALA, 0, Math.PI * 2);
-                            ctx.fillStyle = '#f8f9fa'; ctx.fill();
-                            ctx.strokeStyle = '#222f3e'; ctx.lineWidth = 1; ctx.stroke();
+/* ── TABS & DRAWER ──────────────────────────────────────────────── */
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn:not(.admin-tab)').forEach(b => b.setAttribute('aria-selected','false'));
+  if (btn) btn.setAttribute('aria-selected','true');
+}
 
-                            renderTextNode(`S${sl}`, slX, slY - 2, 3.5, '#222f3e', true);
-                            let tSala = `${area}-${s}º Semestre-${nomeCurso}-Sala ${sl}`;
-                            renderCanvasEvents('sala', tSala, slX, slY + 3, 12);
-                        }
-                    }
-                }
-            });
+let drawerOpen = false;
+function toggleDrawer() {
+  drawerOpen = !drawerOpen;
+  const d   = document.getElementById('mobile-drawer');
+  const btn = document.getElementById('hamburger-btn');
+  d.classList.toggle('open', drawerOpen);
+  d.setAttribute('aria-hidden', !drawerOpen);
+  btn.setAttribute('aria-expanded', drawerOpen);
+}
 
-            ctx.restore();
-        }
+/* close panel on outside click */
+document.getElementById('canvas-wrap').addEventListener('click', e => {
+  if (!e.target.closest('.circle-group')) closePanel();
+});
 
-        // --- SISTEMA REATIVO DE TEXTO COM PREVENÇÃO DE OVERLAPPING ---
-        function renderTextNode(text, x, y, size, color, isBold = false) {
-            // Se o caractere ficar menor que 1.8 pixels físicos, não renderiza para manter a nitidez
-            if (size * cam.zoom < 1.8) return;
+/* ── HINT FADE ──────────────────────────────────────────────────── */
+setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 5500);
 
-            ctx.fillStyle = color;
-            ctx.font = `${isBold ? 'bold ' : ''}${size}px sans-serif`;
-            ctx.textAlign = 'center';
-            
-            // Truncagem inteligente para evitar estouro de linha em microfocos
-            if (text.length > 18 && size <= 8) {
-                text = text.substring(0, 15) + '...';
-            }
-            
-            // Caixa de Contraste para textos medianos/pequenos sobrepostos por linhas
-            if (size < 30) {
-                ctx.save();
-                ctx.font = `${isBold ? 'bold ' : ''}${size}px sans-serif`;
-                let width = ctx.measureText(text).width;
-                ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
-                ctx.fillRect(x - width/2 - 2, y - size + 2, width + 4, size + 2);
-                ctx.restore();
-            }
 
-            ctx.fillStyle = color;
-            ctx.fillText(text, x, y);
-        }
+function applySavedTheme() {
+  const saved = localStorage.getItem('udfnews-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('udfnews-theme', next);
+}
 
-        function renderCanvasEvents(level, targetKey, cx, topY, maxWidth) {
-            const list = eventos.filter(e => e.level === level && e.target === targetKey);
-            if(list.length === 0) return;
+/* ── INIT ───────────────────────────────────────────────────────── */
+buildMap();
+applyTransform();
+updatePubTargets();
+</script>
 
-            let cY = topY;
-            list.forEach(ev => {
-                let tSize = level === 'geral' ? 26 : level === 'area' ? 16 : level === 'semestre' ? 9 : level === 'curso' ? 3.5 : 1.8;
-                let dSize = level === 'geral' ? 18 : level === 'area' ? 11 : level === 'semestre' ? 6 : level === 'curso' ? 2.5 : 1.2;
-                
-                if (tSize * cam.zoom < 2.5) return;
+<footer id="site-footer" role="contentinfo">
+  <span class="footer-label">Desenvolvido por</span>
 
-                let hBox = tSize + dSize + 15;
-                
-                // Card do Canvas
-                ctx.fillStyle = "#ffffff";
-                ctx.strokeStyle = "rgba(0,0,0,0.15)";
-                ctx.fillRect(cx - maxWidth/2, cY, maxWidth, hBox);
-                ctx.strokeRect(cx - maxWidth/2, cY, maxWidth, hBox);
+  <div class="footer-dev">
+    <span class="footer-dev-name">Carlos Eduardo Andrade do Nascimento</span>
+    <a class="footer-gh-link" href="https://github.com/Kdubsb" target="_blank" rel="noopener noreferrer" aria-label="GitHub de Carlos Eduardo">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38l-.01-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.67 7.67 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
 
-                // Título
-                ctx.fillStyle = "#000000";
-                ctx.font = `bold ${tSize}px sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.fillText(ev.title, cx, cY + tSize + 2);
+  <div class="footer-sep" aria-hidden="true"></div>
 
-                // Corpo
-                ctx.fillStyle = "#555555";
-                ctx.font = `${dSize}px sans-serif`;
-                ctx.fillText(ev.desc.substring(0, 35) + "...", cx, cY + tSize + dSize + 8);
+  <div class="footer-dev">
+    <span class="footer-dev-name">João Rafael do Carmo Santos</span>
+    <a class="footer-gh-link" href="https://github.com/docarmorafael" target="_blank" rel="noopener noreferrer" aria-label="GitHub de João Rafael">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38l-.01-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.67 7.67 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48l-.01 2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+</footer>
 
-                cY += hBox + 10;
-            });
-        }
-
-        // --- ATUALIZADOR DO FEED DA AGENDA (PAINEL DIREITO) ---
-        function renderAgendaFeed() {
-            const container = document.getElementById('agenda-feed-container');
-            container.innerHTML = '';
-
-            if (eventos.length === 0) {
-                container.innerHTML = '<p style="font-size:13px; color:#888;">Nenhum evento agendado no momento.</p>';
-                return;
-            }
-
-            // Mapeamento de ordenação por relevância estrutural
-            const ordem = { 'geral': 1, 'area': 2, 'semestre': 3, 'curso': 4, 'sala': 5 };
-            let ordenados = [...eventos].sort((a,b) => ordem[a.level] - ordem[b.level]);
-
-            ordenados.forEach(ev => {
-                const card = document.createElement('div');
-                card.className = `event-card ${ev.level}`;
-                
-                // Formatador amigável da tag de escopo
-                let tagFormatada = ev.target === 'geral' ? 'Escopo Geral' : ev.target.replace(/-/g, ' ➔ ');
-
-                card.innerHTML = `
-                    <h4>${ev.title}</h4>
-                    <p>${ev.desc}</p>
-                    <span class="event-tag">${tagFormatada}</span>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // --- CONTROLADORES DE EVENTO DE MOUSE (ARRRASTE E ZOOM MIRO) ---
-        canvas.addEventListener('mousedown', (e) => {
-            cam.isDragging = true;
-            cam.sX = e.clientX - cam.x;
-            cam.sY = e.clientY - cam.y;
-        });
-        window.addEventListener('mouseup', () => cam.isDragging = false);
-        canvas.addEventListener('mousemove', (e) => {
-            if (!cam.isDragging) return;
-            cam.x = e.clientX - cam.sX;
-            cam.y = e.clientY - cam.sY;
-            draw();
-        });
-        canvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const mX = e.clientX - rect.left;
-            const mY = e.clientY - rect.top;
-
-            let scale = e.deltaY < 0 ? 1.15 : 1 / 1.15;
-            let newZoom = Math.max(0.01, Math.min(cam.zoom * scale, 28));
-
-            cam.x = mX - (mX - cam.x) * (newZoom / cam.zoom);
-            cam.y = mY - (mY - cam.y) * (newZoom / cam.zoom);
-            cam.zoom = newZoom;
-            draw();
-        }, { passive: false });
-
-        canvas.addEventListener('dblclick', () => {
-            cam.zoom = Math.min(cam.zoom * 2.5, 20);
-            draw();
-        });
-
-        // --- LOGICA DOS FILTROS DO PAINEL ADMIN ---
-        const selNivel = document.getElementById('news-level');
-        selNivel.addEventListener('change', syncFormFilters);
-        document.getElementById('f-area').addEventListener('change', syncFormFilters);
-
-        function syncFormFilters() {
-            const nv = selNivel.value;
-            document.getElementById('div-f-area').style.display = ['area','semestre','curso','sala'].includes(nv) ? 'block' : 'none';
-            document.getElementById('div-f-semestre').style.display = ['semestre','curso','sala'].includes(nv) ? 'block' : 'none';
-            document.getElementById('div-f-curso').style.display = ['curso','sala'].includes(nv) ? 'block' : 'none';
-            document.getElementById('div-f-sala').style.display = nv === 'sala' ? 'block' : 'none';
-
-            // Hidrata selects
-            const sSem = document.getElementById('f-semestre');
-            if(sSem.innerHTML === '') {
-                for(let i=1; i<=config.semestres; i++) sSem.innerHTML += `<option value="${i}º Semestre">${i}º Semestre</option>`;
-            }
-            
-            const areaAtiva = document.getElementById('f-area').value;
-            const sCur = document.getElementById('f-curso');
-            sCur.innerHTML = '';
-            for(let c=0; c<config.cursosPorArea; c++) {
-                let n = cursosPorEixo[areaAtiva][c % cursosPorEixo[areaAtiva].length];
-                sCur.innerHTML += `<option value="${n}">${n}</option>`;
-            }
-
-            const sSala = document.getElementById('f-sala');
-            sSala.innerHTML = '';
-            for(let s=1; s<=config.salasPorCurso; s++) sSala.innerHTML += `<option value="Sala ${s}">Sala ${s}</option>`;
-        }
-
-        // Configuração de Nova Grade de Círculos
-        document.getElementById('btn-rebuild').addEventListener('click', () => {
-            config.semestres = parseInt(document.getElementById('cfg-semestres').value);
-            config.cursosPorArea = parseInt(document.getElementById('cfg-cursos').value);
-            config.salasPorCurso = parseInt(document.getElementById('cfg-salas').value);
-            document.getElementById('f-semestre').innerHTML = ''; // força reset
-            syncFormFilters();
-            draw();
-            showToast("Grade e subgrupos recalculados!");
-        });
-
-        // Envio de novo comunicado
-        document.getElementById('btn-postar').addEventListener('click', () => {
-            const t = document.getElementById('news-title').value;
-            const d = document.getElementById('news-desc').value;
-            if(!t || !d) return alert("Preencha o título e a descrição!");
-
-            let target = 'geral';
-            const nv = selNivel.value;
-            if(nv !== 'geral') {
-                const area = document.getElementById('f-area').value;
-                const sem = document.getElementById('f-semestre').value;
-                const curso = document.getElementById('f-curso').value;
-                const sala = document.getElementById('f-sala').value;
-
-                if(nv === 'area') target = area;
-                if(nv === 'semestre') target = `${area}-${sem}`;
-                if(nv === 'curso') target = `${area}-${sem}-${curso}`;
-                if(nv === 'sala') target = `${area}-${sem}-${curso}-${sala}`;
-            }
-
-            eventos.push({ level: nv, target, title: t, desc: d });
-            document.getElementById('news-title').value = '';
-            document.getElementById('news-desc').value = '';
-            
-            draw();
-            renderAgendaFeed();
-            showToast("Aviso fixado no mapa e na agenda!");
-        });
-
-        // --- SISTEMA DE UTILS ---
-        function varColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-        function showToast(m) {
-            const el = document.getElementById('toast'); el.innerText = m; el.classList.add('show');
-            setTimeout(() => el.classList.remove('show'), 3000);
-        }
-
-        // --- FUNÇÕES DA OUVIDORIA (ALUNO) ---
-        function abrirOuvidoria() { document.getElementById('ouvidoria-modal').style.display = 'flex'; }
-        function fecharModal() { document.getElementById('ouvidoria-modal').style.display = 'none'; }
-        function enviarOuvidoria() {
-            const msg = document.getElementById('ouv-msg').value;
-            if(!msg) return alert("Escreva uma mensagem para a coordenação.");
-            fecharModal();
-            document.getElementById('ouv-msg').value = '';
-            showToast("Manifestação enviada sigilosamente à reitoria!");
-        }
-        function logoutSimulado() {
-            alert("Saindo do UDFNEWS... Sessão encerrada.");
-            window.close(); // Tenta fechar a aba se permitido pelo navegador
-        }
-
-        // Inicialização
-        syncFormFilters();
-        draw();
-        renderAgendaFeed();
-    </script>
 </body>
 </html>
+
