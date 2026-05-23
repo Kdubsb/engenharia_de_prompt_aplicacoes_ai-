@@ -50,7 +50,7 @@ A plataforma tem como principal objetivo servir como um ambiente de postagens ad
 
 ## 📚 Reflexão Crítica
 
-Para contornar o limite de integração como API, que seria complexo e demandaria mais tempo, os estudantes implementaram uma aba de cadastro, na qual administratores podem registrar e publicar seus eventos acadêmicos para visualização.
+Para contornar a limitação de integração como API, que seria complexo e demandaria mais tempo, os estudantes implementaram uma aba de cadastro, na qual administratores podem registrar e publicar seus eventos acadêmicos para visualização.
 
 ---
 
